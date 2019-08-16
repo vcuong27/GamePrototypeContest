@@ -9,6 +9,8 @@ https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/inside-a-progra
 NEVER commit TO master directly
 Every one creat your own branch and create Merge request
 
+Create your OWN TEST SCENE/Prefabs Edit this cause merge problem
+
 # Unity Remote
 Follow instruction to debug in android device
 https://docs.unity3d.com/2018.1/Documentation/Manual/UnityRemote5.html
