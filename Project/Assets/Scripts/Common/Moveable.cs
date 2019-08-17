@@ -18,12 +18,46 @@ public class Moveable : MonoBehaviour
 
     // Moving 
     [SerializeField]
+    private Vector2 input;
+    [SerializeField]
     private float aceleration;
     [SerializeField]
     private float maxVelocity;
     [SerializeField]
+    private float acceptableStopDistance = 0.3f;
+    [SerializeField]
     private float deceleration;
+    [SerializeField]
+    private float turningMaxSpeedRatio = 0.7f;
+    [SerializeField]
     private float dazedTimer;
+    public float MaxVelocity
+    {
+        get
+        {
+            if (Turning)
+            {
+                return maxVelocity * Mathf.Pow((360 - Mathf.Abs(TargetAngle)) / 360, 3) * turningMaxSpeedRatio;
+            }
+            return maxVelocity;
+        }
+    }
+    public float TargetDistance
+    {
+        get
+        {
+            float magnitude = 0;
+            if (target != null)
+            {
+                magnitude = (target.position - transform.position).magnitude;
+            }
+            else if (destination != null)
+            {
+                magnitude = (destination.Value - transform.position).magnitude;
+            }
+            return magnitude;
+        }
+    }
     private float Dazed
     {
         get { return dazedTimer - Time.time; }
@@ -40,14 +74,50 @@ public class Moveable : MonoBehaviour
     private bool linearspeed = false;
 
     // Turning and aiming
-    public Vector3 destination;
+    [SerializeField]
+    public Vector3? destination;
+    [SerializeField]
     public Transform target;
     [SerializeField]
     private bool onlyForward; // Either move vector lineup with facing or not
+    [SerializeField]
+    private float acceptableTargetAngle = 0.1f;
     public Vector2 onward => transform.up;
+    public Vector2 Onward;
+    public float TargetAngle
+    {
+        get
+        {
+            float targetAngle = 0;
+            if (target != null)
+            {
+                targetAngle = Vector2.SignedAngle(onward, target.position - transform.position);
+            }
+            else if (destination != null)
+            {
+                targetAngle = Vector2.SignedAngle(onward, destination.Value - transform.position);
+            }
+            if (targetAngle == 360) targetAngle = 0;
+            return targetAngle;
+        }
+    }
 
     [SerializeField]
-    private float turnRate = 21600; // 21600 degree per sec = 360 degree per frame
+    private float turnRate = 21600;
+    private float TurnRate
+    {
+        get
+        {
+            if (velocity.magnitude > 0)
+            {
+                //TODO
+            }
+            return turnRate;
+        }
+    }
+    private bool Turning => Mathf.Abs(TargetAngle) >= acceptableTargetAngle;
+    public bool turning;
+
 
     // Controller/TouchPad
     public GetControllerInput getControllerInput;
@@ -65,46 +135,40 @@ public class Moveable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-        InputManager.Default.OnKeyPressed += OnKeyPressed;
-        InputManager.Default.OnDpadPressed += OnDpadPressed;
+        InputManager.Default.OnKeyHold += OnKeyHeld;
+        InputManager.Default.OnMouseHold += OnMouseHeld;
+        InputManager.Default.OnDpadHold += OnDpadHold;
+        InputManager.Default.OnTouch += OnTouch;
     }
 
     // Update is called once per frame
     void Update()
     {
         //stick to the mouse
-        destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
+        //destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        turning = Turning;
         float dt = Time.deltaTime;
+        Onward = transform.up;
         // Turning
-
-        float targetAngle = 0;
-        if (target != null)
+        if (TargetAngle != 0f)
         {
-            targetAngle = Vector2.SignedAngle(onward, target.position - transform.position);
-        }
-        else if (destination != Vector3.zero)
-        {
-            targetAngle = Vector2.SignedAngle(onward, destination - transform.position);
-        }
-
-        if (targetAngle != 0f)
-        {
-            float maximumAngle = turnRate * dt;
-            if (maximumAngle > Mathf.Abs(targetAngle))
+            float maximumAngle = TurnRate * dt;
+            if (maximumAngle > Mathf.Abs(TargetAngle))
             {
-                transform.LookAt2D(target != null ? target.position : destination);//snap
+                transform.LookAt2D(target != null ? target.position : destination ?? Vector2.zero);//snap
+                Debug.Log("snap");
             }
             else
             {
-                Turn(maximumAngle * targetAngle / Mathf.Abs(targetAngle));
+                Debug.Log("turn");
+                Turn(maximumAngle * TargetAngle / Mathf.Abs(TargetAngle));
             }
 
         }
+        Onward = transform.up;
 
         // Moving
-        if (Mathf.Abs((destination - transform.position).magnitude) < 0.1f && autopilot == true)
+        if (TargetDistance < acceptableStopDistance && autopilot == true)
         {
             autopilot = false;
             Stop();
@@ -112,41 +176,52 @@ public class Moveable : MonoBehaviour
 
         if (autopilot)
         {
-            Acelerate(onward, dt);
+            input = onward;
         }
-        transform.position += new Vector3(velocity.x * dt, velocity.y * dt, 0f);
-        debug.text = $"Velocity {velocity.ToString()}";
-
-
+        Acelerate(dt);
         // Object always want to rest
         Decelerate(dt);
+
+        transform.position += new Vector3(velocity.x * dt, velocity.y * dt, 0f);
+        debug.text = $"Velocity {velocity.ToString()}";
+        input = Vector2.zero;
     }
 
-    private void OnKeyPressed(KeyCode k, float dt)
+    private void OnKeyHeld(KeyCode k, float dt)
     {
         switch (k)
         {
             case KEY_MOVE_UP:
-                Acelerate(Vector2.up, dt);
+                if (onlyForward)
+                {
+                    input += onward;
+                }
+                else
+                    input += Vector2.up;
                 break;
             case KEY_MOVE_DOWN:
-                Acelerate(Vector2.down, dt);
+                if (onlyForward)
+                {
+                    input += -onward;
+                }
+                else
+                    input += Vector2.down;
                 break;
             case KEY_MOVE_LEFT:
                 if (onlyForward)
                 {
-                    Turn(turnRate / 60);
+                    Turn(TurnRate * dt);
                 }
                 else
-                    Acelerate(Vector2.left, dt);
+                    input += Vector2.left;
                 break;
             case KEY_MOVE_RIGHT:
                 if (onlyForward)
                 {
-                    Turn(-turnRate, dt);
+                    Turn(-TurnRate * dt);
                 }
                 else
-                    Acelerate(Vector2.right, dt);
+                    input += Vector2.right;
                 break;
             case KeyCode.None:
                 break;
@@ -155,59 +230,53 @@ public class Moveable : MonoBehaviour
         }
         //Debug.Log($"Key {k.ToString()} pressed");
     }
-    private void OnDpadPressed(Vector2 input, float dt)
+    private void OnDpadHold(Vector2 input, float dt)
     {
-        if (input == Vector2.zero)
-        {
-            return;
-        }
+        this.input = input;
+    }
+    public void OnTouch(Touch touch, float dt)
+    {
+        MoveTo(Camera.main.ScreenToWorldPoint(touch.position));
+    }
 
-        Acelerate(input, dt);
+    void OnMouseHeld(int button, Vector3 position, float dt)
+    {
+        if (button == 0)
+            MoveTo(Camera.main.ScreenToWorldPoint(position));
     }
 
     // Moving
-    private void Acelerate(Vector2 input, float dt)
+    private void Acelerate(float dt)
     {
         if (dazedTimer > Time.time) return;
 
-        if (onlyForward)
-        {
-            input = onward;
-        }
         if (autopilot)
         {
             if (linearspeed)
             {
-                velocity += input.normalized * aceleration * dt;
-                if (velocity.magnitude > maxVelocity)
+                velocity = input.normalized * (velocity.magnitude + aceleration * dt);
+                if (velocity.magnitude > MaxVelocity)
                 {
-                    velocity = velocity.normalized * maxVelocity;
+                    velocity = velocity.normalized * MaxVelocity;
                 }
             }
             else
             {
                 // v^2 = v0^2 + 2a * displacement
                 // v = 0 to stop
-                float minimumDisplacement = -velocity.magnitude * velocity.magnitude / 2 / deceleration;
-                float currentDistance = -1;
-                if (target != null)
+                float minimumDisplacement = velocity.magnitude * velocity.magnitude / 2 / deceleration;
+                if (TargetDistance <= minimumDisplacement)
                 {
-                    currentDistance = (target.position - transform.position).magnitude;
-                }
-                else if (destination != null)
-                {
-                    currentDistance = (destination - transform.position).magnitude;
-                }
-
-                if (Mathf.Abs(currentDistance) <= Mathf.Abs(minimumDisplacement))
-                {
+                    // decelerate
+                    Debug.Log("slowdown");
                 }
                 else
                 {
-                    velocity += input.normalized * aceleration * dt;
-                    if (velocity.magnitude > maxVelocity)
+                    Debug.Log("speedup");
+                    velocity = input.normalized * (velocity.magnitude + aceleration * dt);
+                    if (velocity.magnitude > MaxVelocity)
                     {
-                        velocity = velocity.normalized * maxVelocity;
+                        velocity = velocity.normalized * MaxVelocity;
                     }
                 }
             }
@@ -217,9 +286,9 @@ public class Moveable : MonoBehaviour
             if (input != Vector2.zero)
             {
                 velocity += input.normalized * aceleration * dt;
-                if (velocity.magnitude > maxVelocity)
+                if (velocity.magnitude > MaxVelocity)
                 {
-                    velocity = velocity.normalized * maxVelocity;
+                    velocity = velocity.normalized * MaxVelocity;
                 }
             }
         }
@@ -227,28 +296,39 @@ public class Moveable : MonoBehaviour
 
     private void Decelerate(float dt)
     {
-        float speedXDeceleration = velocity.x == 0 ? 0 : velocity.x / Mathf.Abs(velocity.x) * deceleration * dt;
-        float speedYDeceleration = velocity.y == 0 ? 0 : velocity.y / Mathf.Abs(velocity.y) * deceleration * dt;
+        if (input.x == 0)
+        {
+            Debug.Log("decelerateX");
+            float speedXDeceleration = velocity.x == 0 ? 0 : velocity.x / Mathf.Abs(velocity.x) * deceleration * dt;
+            if (Mathf.Abs(velocity.x) - Mathf.Abs(speedXDeceleration) <= 0)
+                velocity.x = 0;
+            else
+                velocity.x -= speedXDeceleration;
+        }
 
-        if (Mathf.Abs(velocity.x) - Mathf.Abs(speedXDeceleration) <= 0)
-            velocity.x = 0;
-        else
-            velocity.x -= speedXDeceleration;
+        if (input.y == 0)
+        {
+            Debug.Log("decelerateY");
+            float speedYDeceleration = velocity.y == 0 ? 0 : velocity.y / Mathf.Abs(velocity.y) * deceleration * dt;
 
-        if (Mathf.Abs(velocity.y) - Mathf.Abs(speedYDeceleration) <= 0)
-            velocity.y = 0;
-        else
-            velocity.y -= speedYDeceleration;
+            if (Mathf.Abs(velocity.y) - Mathf.Abs(speedYDeceleration) <= 0)
+                velocity.y = 0;
+            else
+                velocity.y -= speedYDeceleration;
+        }
     }
 
     private void Stop()
     {
+        autopilot = false;
+        input = Vector2.zero;
         velocity = Vector2.zero;
     }
 
     public void MoveTo(Vector2 destination)
     {
         this.destination = destination;
+        input = onward;
         autopilot = true;
     }
 
@@ -261,7 +341,7 @@ public class Moveable : MonoBehaviour
     // We just do the z rotation as the game is 2d at XY
     public void Turn(float eulerAngle)
     {
-        transform.Rotate(Vector3.forward, eulerAngle.SignedEulerAngle());
+        transform.Rotate(Vector3.forward, eulerAngle);
     }
 
     public void Turn(float eulerAngle, float dt)
@@ -269,6 +349,7 @@ public class Moveable : MonoBehaviour
         Debug.Log($"eulerAngle {eulerAngle * dt}");
         Turn(eulerAngle * dt);
     }
+
 
     // Callbacks
     private void OnCollisionEnter2D(Collision2D collision)

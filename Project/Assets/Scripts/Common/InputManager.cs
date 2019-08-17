@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
@@ -13,12 +14,15 @@ public class InputManager : MonoBehaviour
     }
 
     public delegate void KeyHandler(KeyCode k, float dt);
+    public delegate void MouseHandler(int button, Vector3 position, float dt);
     public delegate void DpadHandler(Vector2 axis, float dt);
-    public delegate void TouchInputHandler(Vector2 position, float dt);
+    public delegate void TouchInputHandler(Touch touch, float dt);
 
-    private List<KeyCode> holding = new List<KeyCode>();
-    public KeyHandler OnKeyPressed;
-    public DpadHandler OnDpadPressed;
+    private HashSet<KeyCode> holding = new HashSet<KeyCode>();
+    private HashSet<int> mouseHolding = new HashSet<int>();
+    public KeyHandler OnKeyHold;
+    public MouseHandler OnMouseHold;
+    public DpadHandler OnDpadHold;
     public TouchInputHandler OnTouch;
 
     private ControllerType type = ControllerType.None;
@@ -29,6 +33,8 @@ public class InputManager : MonoBehaviour
     public bool dpadEnabled = false;
     public bool touchInputEnabled = false;
 
+    // Debug
+    public Text debug;
     private InputManager()
     {
 
@@ -36,8 +42,8 @@ public class InputManager : MonoBehaviour
 
     ~InputManager()
     {
-        OnKeyPressed = null;
-        OnDpadPressed = null;
+        OnKeyHold = null;
+        OnDpadHold = null;
         OnTouch = null;
     }
 
@@ -63,8 +69,7 @@ public class InputManager : MonoBehaviour
         //type = ControllerType.Touch;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnGUI()
     {
         float dt = Time.deltaTime;
         if (type == ControllerType.KeyBoard)
@@ -78,40 +83,73 @@ public class InputManager : MonoBehaviour
                 DpadHandle(dt);
             }
         }
+
+        // Debug
+        string debugText = "";
+        foreach (KeyCode k in holding)
+        {
+            debugText += k.ToString();
+        }
+        foreach (int k in mouseHolding)
+        {
+            debugText += "mouse" + k.ToString();
+        }
+        debug.text = debugText;
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
     }
 
     void KeyboardHandle(float dt)
     {
+        Event e = Event.current;
 
-        //Input Handling
-        if (Input.anyKey)
+        if (e.isKey)
         {
-            foreach (KeyCode k in Input.inputString.ToCharArray())
+            if (e.type == EventType.KeyDown)
             {
-                holding.Add(k);
+                holding.Add(e.keyCode);
+            }
+            else if (e.type == EventType.KeyUp)
+            {
+                holding.Remove(e.keyCode);
             }
         }
-        else
+        if (e.isMouse)
         {
-            OnKeyPressed?.Invoke(KeyCode.None, dt);
+            if (e.type == EventType.MouseDown)
+            {
+                mouseHolding.Add(e.button);
+            }
+            else if (e.type == EventType.MouseUp)
+            {
+                mouseHolding.Remove(e.button);
+            }
         }
-
-        foreach (KeyCode k in holding.ToArray())
+        foreach (KeyCode k in holding)
         {
-            if (!Input.GetKey(k)) holding.Remove(k);
-            else OnKeyPressed?.Invoke(k, dt);
+            OnKeyHold?.Invoke(k, dt);
+        }
+        foreach (int button in mouseHolding)
+        {
+            OnMouseHold?.Invoke(button, Input.mousePosition, dt);
         }
     }
 
     void DpadHandle(float dt)
     {
         if (dpad == null) return;
-        OnDpadPressed?.Invoke(dpad.GetAxis(), dt);
+        OnDpadHold?.Invoke(dpad.GetAxis(), dt);
     }
 
     void TouchHandle(float dt)
     {
-        Vector2 touchPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-        OnTouch?.Invoke(touchPos, dt);
+        foreach (Touch touch in Input.touches)
+        {
+            OnTouch?.Invoke(touch, dt);
+        }
     }
 }
