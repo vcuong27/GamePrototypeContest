@@ -7,6 +7,7 @@ public class BaseWeapons : GameObject
     public Bullet M_BULLET;
     public int M_NUMBER_BULLETS = 1;
     public float M_RELOAD = 10.0f;
+    public float M_RELOAD_IN_STASH = 10.0f;
     public float M_FIRE_RATE = 0.05f;
     public float M_BULLET_SPEED = 10.0f;
 
@@ -15,25 +16,47 @@ public class BaseWeapons : GameObject
     private Vector2 m_Target;
     private float m_delayFire;
     private float m_delayReload;
+    private float m_delayReloadInStash;
     private float m_CurrentBullet;
     private bool m_IsFire;
+    private bool m_isUsing;
     private List<Bullet> m_ListBullet;
-
     public virtual void Start()
     {
         m_CurrentBullet = M_NUMBER_BULLETS;
         m_delayFire = M_FIRE_RATE;
         m_delayReload = M_RELOAD;
+        m_delayReloadInStash = M_RELOAD_IN_STASH;
         m_delayFire = 0.0f;
         m_IsFire = true;
         Debug.Log("BaseWeapons Start");
         m_ListBullet = new List<Bullet>();
-
+        m_isUsing = false;
     }
 
     public virtual void Update()
     {
         float dt = Time.deltaTime;
+
+        if (!m_isUsing)
+        {
+            if (m_IsFire)
+                return;
+            //reload in stash
+            if (m_delayReloadInStash <= 0)
+            {
+                m_IsFire = true;
+                m_delayReload = M_RELOAD;
+                m_delayReloadInStash = M_RELOAD_IN_STASH;
+                m_CurrentBullet = M_NUMBER_BULLETS;
+            }
+            else
+            {
+                m_delayReloadInStash -= dt;
+            }
+            return;
+        }
+
         //fire and reload 
         if (m_IsFire)
         {
@@ -53,20 +76,23 @@ public class BaseWeapons : GameObject
             //reload
             if (m_delayReload <= 0)
             {
-                Debug.Log("reloaded");
                 m_IsFire = true;
                 m_delayReload = M_RELOAD;
+                m_delayReloadInStash = M_RELOAD_IN_STASH;
                 m_CurrentBullet = M_NUMBER_BULLETS;
             }
             else
             {
-                Debug.Log("reload--------");
                 m_delayReload -= dt;
             }
         }
     }
-
-    public void setFireTarget(Vector2 target)
+    public void SetUsing(bool IsUsing)
+    {
+        m_isUsing = IsUsing;
+        Debug.Log("SetUsing " + m_isUsing);
+    }
+    public void SetFireTarget(Vector2 target)
     {
         m_Target = target;
     }
@@ -74,10 +100,7 @@ public class BaseWeapons : GameObject
     private void Fire()
     {
         Bullet bullet = SpawnBullet();
-        bullet.enabled = true;
-
-
-        //caculate 
+        bullet.SetActive(true);
         bullet.SetVelocity(GetVeclocity());
         bullet.SetDamageComponent(m_DameComponent);
         bullet.SetPosition(Player.Instance.transform.position);
@@ -95,14 +118,10 @@ public class BaseWeapons : GameObject
         {
             if (item.enabled == false)
             {
-                Debug.Log("SpawnBullet 1");
                 return item;
             }
         }
-        Debug.Log("SpawnBullet 2");
-
         Bullet bullet = Instantiate(M_BULLET, transform.position, Quaternion.identity);
-
         m_ListBullet.Add(bullet);
         return bullet;
     }

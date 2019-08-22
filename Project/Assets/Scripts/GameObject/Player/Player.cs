@@ -16,10 +16,11 @@ public class Player : GameObject
 
     private void Start()
     {
-       // m_listWP.Add(new Pistol());
+        //m_listWP.Add(new Pistol());
         m_CurrentWeapons = m_listWP[0];
-        Instantiate(m_CurrentWeapons, transform.position, Quaternion.identity);
+        //Instantiate(m_CurrentWeapons, transform.position, Quaternion.identity);
         Instance = this;
+        m_CurrentWeapons.SetUsing(true);
     }
 
 

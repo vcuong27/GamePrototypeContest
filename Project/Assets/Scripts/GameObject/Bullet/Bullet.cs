@@ -45,6 +45,12 @@ public class Bullet : GameObject
         return m_DamageComponent;
     }
 
+    public void SetActive(bool active)
+    {
+        enabled = active;
+        //GetComponent<Renderer>().enabled = active;
+    }
+
     private void Moving(float dt)
     {
         transform.position += new Vector3(m_Veclocity.x * dt, m_Veclocity.y * dt, 0f);
@@ -52,7 +58,7 @@ public class Bullet : GameObject
 
     private void Explorer()
     {
-        enabled = false;
+        SetActive(false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
