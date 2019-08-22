@@ -156,11 +156,11 @@ public class Moveable : MonoBehaviour
             if (maximumAngle > Mathf.Abs(TargetAngle))
             {
                 transform.LookAt2D(target != null ? target.position : destination ?? Vector2.zero);//snap
-                Debug.Log("snap");
+                //Debug.Log("snap");
             }
             else
             {
-                Debug.Log("turn");
+                //Debug.Log("turn");
                 Turn(maximumAngle * TargetAngle / Mathf.Abs(TargetAngle));
             }
 
@@ -268,11 +268,11 @@ public class Moveable : MonoBehaviour
                 if (TargetDistance <= minimumDisplacement)
                 {
                     // decelerate
-                    Debug.Log("slowdown");
+                    //Debug.Log("slowdown");
                 }
                 else
                 {
-                    Debug.Log("speedup");
+                    //Debug.Log("speedup");
                     velocity = input.normalized * (velocity.magnitude + aceleration * dt);
                     if (velocity.magnitude > MaxVelocity)
                     {
@@ -298,7 +298,7 @@ public class Moveable : MonoBehaviour
     {
         if (input.x == 0)
         {
-            Debug.Log("decelerateX");
+            //Debug.Log("decelerateX");
             float speedXDeceleration = velocity.x == 0 ? 0 : velocity.x / Mathf.Abs(velocity.x) * deceleration * dt;
             if (Mathf.Abs(velocity.x) - Mathf.Abs(speedXDeceleration) <= 0)
                 velocity.x = 0;
@@ -308,7 +308,7 @@ public class Moveable : MonoBehaviour
 
         if (input.y == 0)
         {
-            Debug.Log("decelerateY");
+            //Debug.Log("decelerateY");
             float speedYDeceleration = velocity.y == 0 ? 0 : velocity.y / Mathf.Abs(velocity.y) * deceleration * dt;
 
             if (Mathf.Abs(velocity.y) - Mathf.Abs(speedYDeceleration) <= 0)

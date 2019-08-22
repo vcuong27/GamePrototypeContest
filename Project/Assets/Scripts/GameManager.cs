@@ -4,13 +4,22 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+
+    public static GameManager Instance;
+
+    public float m_ScreenWidth;
+    public float m_ScreenHeight;
+
+
     void Start()
     {
+        Debug.Log("GameManager start");
+        Instance = this;
         Screen.orientation = ScreenOrientation.Portrait;
+        m_ScreenWidth = 20;
+        m_ScreenHeight = 10;
     }
 
-    // Update is called once per frame
     void Update()
     {
         

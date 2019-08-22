@@ -46,7 +46,7 @@ public class Destructible : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        DamagingComponent damaging = collision.gameObject.GetComponent<DamagingComponent>();
+        DamageComponent damaging = collision.gameObject.GetComponent<DamageComponent>();
         if (damaging != null)
         {
             hp -= damaging.Damage;
