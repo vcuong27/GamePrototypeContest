@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
 
     private Vector3 GetSpawnLocation()
     {
-        Vector3 vec;
+        Vector3 vec = new Vector3(1.0f,1.0f,1.0f);
         // TODO: need to have random or special location to spawn enermy
 
         return vec;

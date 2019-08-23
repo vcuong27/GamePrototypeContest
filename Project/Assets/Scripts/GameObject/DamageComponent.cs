@@ -10,10 +10,10 @@ public class DamageComponent
     public float DOTDuration => m_DotDuration;
     public float DOTInterval => m_DotInterval;
 
-    private float m_Damage;
-    private float m_Dot;
-    private float m_DotInterval;
-    private float m_DotDuration;
+    public float m_Damage;
+    public float m_Dot;
+    public float m_DotInterval;
+    public float m_DotDuration;
 
     public DamageComponent(float damage, float dot, float dotInterval, float dotDuration)
     {

@@ -12,7 +12,6 @@ public class BaseEnemy : GameObject
 
     public virtual void Start()
     {
-        m_ListBullet = new List<Bullet>();
         m_CurrentWeapons.SetUsing(false);
         m_IsDie = false;
         base.Start();
@@ -72,25 +71,25 @@ public class BaseEnemy : GameObject
         foreach (var item in m_CurrentDameTaken)
         {
             // physic damage
-            if (item.Damage > 0)
+            if (item.m_Damage > 0)
             {
                 if (m_Current_Armor > 0)
                 {
-                    m_Current_Armor -= item.Damage;
+                    m_Current_Armor -= item.m_Damage;
                     if (m_Current_Armor > 0)
                     {
-                        item.Damage = 0;
+                        item.m_Damage = 0;
                     }
                     else
                     {
-                        item.Damage = 0 - m_Current_Armor;
+                        item.m_Damage = 0 - m_Current_Armor;
                         m_Current_Armor = 0;
                     }
                 }
                 if (item.Damage > 0)
                 {
                     m_Current_Heal -= item.Damage;
-                    item.Damage = 0;
+                    item.m_Damage = 0;
                 }
 
             }
@@ -99,7 +98,7 @@ public class BaseEnemy : GameObject
             {
                 item.m_DotDuration -= dt;
                 if (item.m_DotDuration <= 0)
-                    item.DOT = 0;
+                    item.m_Dot = 0;
 
                 // TODO: need check this dame type
                 //m_Current_Heal -= item.Damage;
@@ -110,7 +109,7 @@ public class BaseEnemy : GameObject
                 m_IsDie = true;
                 break;
             }
-            if (item.Damage <= 0 && item.DOT <= 0)
+            if (item.m_Damage <= 0 && item.m_Dot <= 0)
                 m_CurrentDameTaken.Remove(item);
         }
     }

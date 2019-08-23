@@ -18,7 +18,7 @@ public class Destructible : GameObject
     void Update()
     {
      
-        if (HP <= 0)
+        if (m_Current_Heal <= 0)
         {
             Destruct();
         }
@@ -29,11 +29,11 @@ public class Destructible : GameObject
         DamageComponent damaging = collision.gameObject.GetComponent<DamageComponent>();
         if (damaging != null)
         {
-            hp -= damaging.Damage;
-            dot = damaging.DOT;
-            dotInterval = damaging.DOTInterval;
-            dotTimer = Time.time + damaging.DOTDuration + damaging.DOTInterval; // +damaging.DOTInterval for extratiming check
-            nextDOTtick = Time.time + dotInterval;
+            m_Current_Heal -= damaging.Damage;
+            //dot = damaging.DOT;
+            //dotInterval = damaging.DOTInterval;
+            //dotTimer = Time.time + damaging.DOTDuration + damaging.DOTInterval; // +damaging.DOTInterval for extratiming check
+            //nextDOTtick = Time.time + dotInterval;
         }
     }
 

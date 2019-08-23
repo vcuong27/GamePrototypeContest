@@ -40,7 +40,7 @@ public class Player : GameObject
         BaseEnemy enemy = FindNearestEnermy();
         if (Utils.DistanceBetweenTwoPoint(transform.position, enemy.transform.position) < m_CurrentWeapons.GetAttackRange())
         {
-            Attack();
+            Attack(enemy);
         }
         else
         {
@@ -102,7 +102,7 @@ public class Player : GameObject
         return enemy;
     }
 
-    private void Attack()
+    private void Attack(BaseEnemy enemy)
     {
         m_CurrentWeapons.SetFireTarget(enemy.transform.position);
     }
@@ -118,25 +118,25 @@ public class Player : GameObject
         foreach (var item in m_CurrentDameTaken)
         {
             // physic damage
-            if (item.Damage > 0)
+            if (item.m_Damage > 0)
             {
                 if (m_Current_Armor > 0)
                 {
-                    m_Current_Armor -= item.Damage;
+                    m_Current_Armor -= item.m_Damage;
                     if (m_Current_Armor > 0)
                     {
-                        item.Damage = 0;
+                        item.m_Damage = 0;
                     }
                     else
                     {
-                        item.Damage = 0 - m_Current_Armor;
+                        item.m_Damage = 0 - m_Current_Armor;
                         m_Current_Armor = 0;
                     }
                 }
-                if (item.Damage > 0)
+                if (item.m_Damage > 0)
                 {
-                    m_Current_Heal -= item.Damage;
-                    item.Damage = 0;
+                    m_Current_Heal -= item.m_Damage;
+                    item.m_Damage = 0;
                 }
 
             }
@@ -145,7 +145,7 @@ public class Player : GameObject
             {
                 item.m_DotDuration -= dt;
                 if (item.m_DotDuration <= 0)
-                    item.DOT = 0;
+                    item.m_Dot = 0;
 
                 // TODO: need check this dame type
                 //m_Current_Heal -= item.Damage;
@@ -156,7 +156,7 @@ public class Player : GameObject
                 m_IsDie = true;
                 break;
             }
-            if (item.Damage <= 0 && item.DOT <= 0)
+            if (item.m_Damage <= 0 && item.m_Dot <= 0)
                 m_CurrentDameTaken.Remove(item);
         }
     }
@@ -166,8 +166,8 @@ public class Player : GameObject
     {
         // TODO: need implement die vfx and show defeat screen
         m_IsDie = false;
-        enabled = active;
-        GetComponent<Renderer>().enabled = active;
+        enabled = false;
+        GetComponent<Renderer>().enabled = false;
     }
 
 }
