@@ -13,10 +13,10 @@ public class GameManager : MonoBehaviour
     public float m_ScreenWidth;
     public float m_ScreenHeight;
     public float M_SPAWN_COOLDOWN;
-    public List<BaseEnemy> m_ListEnermyTemplate = new List<BaseEnemy>();
+    public List<Enemy> m_ListEnermyTemplate = new List<Enemy>();
 
 
-    public List<BaseEnemy> GetListEnermy()
+    public List<Enemy> GetListEnermy()
     {
         return m_ListEnermy;
     }
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// private variable
     /// </summary>
-    private List<BaseEnemy> m_ListEnermy = new List<BaseEnemy>();
+    private List<Enemy> m_ListEnermy = new List<Enemy>();
     private float m_DelaySpawn;
 
 
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         if (m_DelaySpawn <=  0)
         {
             m_DelaySpawn = M_SPAWN_COOLDOWN;
-            //BaseEnemy enermy = SpawnEnermy();
+            //Enemy enermy = SpawnEnermy();
             //enermy.transform.position = GetSpawnLocation();
         }
         else
@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private BaseEnemy SpawnEnermy()
+    private Enemy SpawnEnermy()
     {
         foreach (var item in m_ListEnermy)
         {
@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
                 return item;
             }
         }
-        BaseEnemy enermy = Instantiate(m_ListEnermyTemplate[0], transform.position, Quaternion.identity);
+        Enemy enermy = Instantiate(m_ListEnermyTemplate[0], transform.position, Quaternion.identity);
         m_ListEnermy.Add(enermy);
         return enermy;
     }

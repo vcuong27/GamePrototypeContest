@@ -69,4 +69,9 @@ public class Bullet : MonoBehaviour
         //check collision with something to destroy this for vfx
     }
 
+    private void OnEnable()
+    {
+        
+    }
+
 }
