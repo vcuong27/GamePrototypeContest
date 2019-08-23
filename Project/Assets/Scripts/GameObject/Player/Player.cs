@@ -13,12 +13,14 @@ public class Player : GameObject
     private List<DamageComponent> m_CurrentDameTaken;
     //Weapons
     private BaseWeapons m_CurrentWeapons;
+    private bool m_IsDie;
 
     private void Start()
     {
         m_CurrentWeapons = m_listWP[0];
         Instance = this;
         m_CurrentWeapons.SetUsing(true);
+        m_IsDie = false;
         base.Start();
     }
 
@@ -27,8 +29,14 @@ public class Player : GameObject
     {
         float dt = Time.deltaTime;
 
+        //check die condition
+        if (m_IsDie)
+        {
+            Die();
+            return;
+        }
 
-        //choose target
+        //choose target and attack
         BaseEnemy enemy = FindNearestEnermy();
         if (Utils.DistanceBetweenTwoPoint(transform.position, enemy.transform.position) < m_CurrentWeapons.GetAttackRange())
         {
@@ -38,6 +46,10 @@ public class Player : GameObject
         {
             m_CurrentWeapons.SetUsing(false);
         }
+
+
+        //Handle damage
+        UpdateDamage(dt);
 
 
         //change weapon
@@ -64,7 +76,10 @@ public class Player : GameObject
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // check collision with something
+        // TODO: need implement collision 
+        //check collision with something and take damage (from bullet or enermy)
+        //DamageComponent dmg = enemy bullet
+        //TakeDamage(dmg);
     }
 
     private BaseEnemy FindNearestEnermy()
@@ -90,6 +105,69 @@ public class Player : GameObject
     private void Attack()
     {
         m_CurrentWeapons.SetFireTarget(enemy.transform.position);
+    }
+
+
+    private void TakeDamage(DamageComponent dmg)
+    {
+        m_CurrentDameTaken.Add(dmg);
+    }
+
+    private void UpdateDamage(float dt)
+    {
+        foreach (var item in m_CurrentDameTaken)
+        {
+            // physic damage
+            if (item.Damage > 0)
+            {
+                if (m_Current_Armor > 0)
+                {
+                    m_Current_Armor -= item.Damage;
+                    if (m_Current_Armor > 0)
+                    {
+                        item.Damage = 0;
+                    }
+                    else
+                    {
+                        item.Damage = 0 - m_Current_Armor;
+                        m_Current_Armor = 0;
+                    }
+                }
+                if (item.Damage > 0)
+                {
+                    m_Current_Heal -= item.Damage;
+                    item.Damage = 0;
+                }
+
+            }
+
+            if (item.DOT > 0 && item.m_DotDuration > 0)
+            {
+                item.m_DotDuration -= dt;
+                if (item.m_DotDuration <= 0)
+                    item.DOT = 0;
+
+                // TODO: need check this dame type
+                //m_Current_Heal -= item.Damage;
+            }
+
+            if (m_Current_Heal <= 0)
+            {
+                m_IsDie = true;
+                break;
+            }
+            if (item.Damage <= 0 && item.DOT <= 0)
+                m_CurrentDameTaken.Remove(item);
+        }
+    }
+
+
+    private void Die()
+    {
+        // TODO: need implement die vfx and show defeat screen
+        m_IsDie = false;
+        enabled = active;
+        GetComponent<Renderer>().enabled = active;
     }
 
 }

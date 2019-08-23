@@ -12,7 +12,6 @@ public class BaseWeapons : MonoBehaviour
     public float M_BULLET_SPEED = 10.0f;
     public float M_ATTACK_RANGE = 5.0f;
 
-
     public float M_DAMAGE_01 = 10.0f;
     public float M_DAMAGE_02 = 0.0f;
     public float M_DAMAGE_INTERVAL = 0.0f;
@@ -141,7 +140,7 @@ public class BaseWeapons : MonoBehaviour
 
     private Vector2 GetVeclocity()
     {
-        //need implement
+        // TODO: need implement accurate for bullet
         Vector2 veclocity;
         veclocity.x = Player.Instance.transform.position.x - m_Target.x;
         veclocity.y = Player.Instance.transform.position.y - m_Target.y;

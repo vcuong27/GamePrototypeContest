@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
 {
 
     private DamageComponent m_DamageComponent;
+
     private Vector2 m_Veclocity;
     private void Start()
     {
@@ -17,6 +18,7 @@ public class Bullet : MonoBehaviour
 
         //moving 
         Moving(dt);
+
         //destroy
         if ((transform.position.x < -GameManager.Instance.m_ScreenWidth / 2) || (transform.position.x > GameManager.Instance.m_ScreenWidth / 2)
             || (transform.position.y < -GameManager.Instance.m_ScreenHeight / 2) || (transform.position.y > GameManager.Instance.m_ScreenHeight / 2))
@@ -28,13 +30,13 @@ public class Bullet : MonoBehaviour
     public void SetPosition(Vector3 position)
     {
         transform.position = position;
-
     }
+
     public void SetVelocity(Vector2 veclocity)
     {
         m_Veclocity = veclocity;
-
     }
+
     public void SetDamageComponent(DamageComponent damage)
     {
         m_DamageComponent = damage;
@@ -48,7 +50,7 @@ public class Bullet : MonoBehaviour
     public void SetActive(bool active)
     {
         enabled = active;
-        //GetComponent<Renderer>().enabled = active;
+        GetComponent<Renderer>().enabled = active;
     }
 
     private void Moving(float dt)
@@ -63,7 +65,8 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // check collision with something
+        // TODO: need implement collision 
+        //check collision with something to destroy this for vfx
     }
 
 }

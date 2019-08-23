@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
         float dt = Time.deltaTime;
 
 
+        // Spawn Enermy
         if (m_DelaySpawn <=  0)
         {
             m_DelaySpawn = M_SPAWN_COOLDOWN;
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
     private Vector3 GetSpawnLocation()
     {
         Vector3 vec;
+        // TODO: need to have random or special location to spawn enermy
 
         return vec;
     }

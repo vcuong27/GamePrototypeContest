@@ -15,6 +15,7 @@ public class Obstacle : GameObject
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // check collision with something
+        // TODO: need implement collision 
+        //check collision with something (from bullet or player)
     }
 }
