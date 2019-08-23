@@ -7,7 +7,9 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     public bool Ready;
-    private Transform target;
+    public bool OutOfAmmo => nextBullet >= magSize;
+
+
 
     [SerializeField]
     private float attackRange;
@@ -26,39 +28,54 @@ public class Weapon : MonoBehaviour
     [SerializeField]
     private Bullet bullet;
 
-
+    private bool reloading;
     private float reloadTimer;
     private float nextFire;
     [SerializeField]
     private bool firing;
 
-    private List<Bullet> magazine = new List<Bullet>();
-    private bool[] availableBullets;
+    private List<Bullet> bullets = new List<Bullet>();
+    private int nextBullet;
 
     // Start is called before the first frame update
     void Start()
     {
-        availableBullets = new bool[magSize];
+        nextBullet = 0;
         for (int i = 0; i < magSize; i++)
         {
-            Bullet newBullet = Instantiate<Bullet>(bullet);
+            Bullet newBullet = Instantiate(bullet);
             newBullet.enabled = false;
-            magazine.Add(newBullet);
-            availableBullets[i] = true;
+            newBullet.GetComponent<Moveable>().StopOnArrival = false;
+            newBullet.GetComponent<Moveable>().linearspeed = true;
+            bullets.Add(newBullet);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (firing)
+        if (OutOfAmmo)
         {
-            int? nextBullet = GetBulletAvaiable();
-            if (nextFire < Time.time && nextBullet != null)
+            if (reloadTimer < Time.time && !reloading)
             {
-                magazine[nextBullet.Value].transform.position = transform.position;
-                magazine[nextBullet.Value].enabled = true;
-                magazine[nextBullet.Value].GetComponent<Moveable>().target = target;
+                nextBullet = 0;
+            }
+        }
+        else if (firing)
+        {
+            if (nextFire < Time.time)
+            {
+                if (!OutOfAmmo)
+                {
+                    bullets[nextBullet].transform.position = transform.position;
+                    bullets[nextBullet].enabled = true;
+                    bullets[nextBullet].GetComponent<Moveable>().MoveTo(transform.up);
+                    bullets[nextBullet].GetComponent<Moveable>().LookAt(transform.up);
+                }
+                else
+                {
+                    reloading = true;
+                }
             }
         }
     }
@@ -69,8 +86,13 @@ public class Weapon : MonoBehaviour
         nextFire = Time.time + 1 / rateOfFire;
     }
 
-    private int? GetBulletAvaiable()
+    private void OnDisable()
     {
-        return 0;
+        reloading = false;
+    }
+
+    private void OnEnable()
+    {
+        reloading = true;
     }
 }

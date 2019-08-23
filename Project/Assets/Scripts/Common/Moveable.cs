@@ -18,15 +18,12 @@ public class Moveable : MonoBehaviour
 
     public static readonly float HIT_WALL_DAZED_TIME = 0.3f;
 
-    // Keybinding
-    public const KeyCode KEY_MOVE_LEFT = KeyCode.A;
-    public const KeyCode KEY_MOVE_RIGHT = KeyCode.D;
-    public const KeyCode KEY_MOVE_UP = KeyCode.W;
-    public const KeyCode KEY_MOVE_DOWN = KeyCode.S;
 
     // Moving 
+
+    public bool StopOnArrival = true;
     [SerializeField]
-    private Vector2 input;
+    public Vector2 input;
     [SerializeField]
     private float aceleration;
     [SerializeField]
@@ -39,6 +36,7 @@ public class Moveable : MonoBehaviour
     private float turningMaxSpeedRatio = 0.7f;
     [SerializeField]
     private float dazedTimer;
+
     public float MaxVelocity
     {
         get
@@ -87,7 +85,7 @@ public class Moveable : MonoBehaviour
     [SerializeField]
     private bool autopilot = true;
     [SerializeField]
-    private bool linearspeed = false;
+    public bool linearspeed = false;
 
     // Turning and aiming
     [SerializeField]
@@ -95,13 +93,12 @@ public class Moveable : MonoBehaviour
     [SerializeField]
     public Transform target;
     [SerializeField]
-    private bool moveForward; // Either target vector lineup with destination or not
+    public bool moveForward; // Either target vector lineup with destination or not
     [SerializeField]
-    private bool strafe = true; // Either move vector lineup with facing or not
+    public bool strafe = true; // Either move vector lineup with facing or not
     [SerializeField]
     private float acceptableTargetAngle = 0.1f;
     public Vector2 onward => transform.up;
-    public Vector2 Onward;
     public MovingState movingstate;
     public MovingState State
     {
@@ -194,9 +191,6 @@ public class Moveable : MonoBehaviour
     private bool Turning => Mathf.Abs(DestinationAngle) >= acceptableTargetAngle;
     public bool turning;
 
-    // Controller/TouchPad
-    public GetControllerInput getControllerInput;
-
     [SerializeField]
     private Vector2 velocity = Vector2.zero;
 
@@ -210,10 +204,6 @@ public class Moveable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InputManager.Default.OnKeyHold += OnKeyHeld;
-        InputManager.Default.OnMouseHold += OnMouseHeld;
-        InputManager.Default.OnDpadHold += OnDpadHold;
-        InputManager.Default.OnTouch += OnTouch;
     }
 
     // Update is called once per frame
@@ -226,9 +216,8 @@ public class Moveable : MonoBehaviour
 
 
         float dt = Time.deltaTime;
-
+        // Debug
         turning = Turning;
-        Onward = transform.up;
         // Turning
         if (target != null && !moveForward)
             LookAt(target.position, dt);
@@ -236,7 +225,7 @@ public class Moveable : MonoBehaviour
             LookAt(destination.Value, dt);
 
         // Moving
-        if (DestinationDistance < acceptableStopDistance && autopilot == true)
+        if (DestinationDistance < acceptableStopDistance && autopilot == true && StopOnArrival)
         {
             autopilot = false;
             destination = null;
@@ -254,71 +243,6 @@ public class Moveable : MonoBehaviour
         transform.position += new Vector3(velocity.x * dt, velocity.y * dt, 0f);
         debug.text = $"Velocity {velocity.ToString()}";
         input = Vector2.zero;
-    }
-
-    private void OnKeyHeld(KeyCode k, float dt)
-    {
-        switch (k)
-        {
-            case KEY_MOVE_UP:
-                if (!strafe)
-                {
-                    input += onward;
-                }
-                else
-                    input += Vector2.up;
-                break;
-            case KEY_MOVE_DOWN:
-                if (!strafe)
-                {
-                    input += -onward;
-                }
-                else
-                    input += Vector2.down;
-                break;
-            case KEY_MOVE_LEFT:
-                if (!strafe)
-                {
-                    Turn(TurnRate * dt);
-                }
-                else
-                    input += Vector2.left;
-                break;
-            case KEY_MOVE_RIGHT:
-                if (!strafe)
-                {
-                    Turn(-TurnRate * dt);
-                }
-                else
-                    input += Vector2.right;
-                break;
-            case KeyCode.None:
-                break;
-            default:
-                break;
-        }
-        if (input.magnitude > 0 && k != KeyCode.None)
-        {
-            destination = null;
-        }
-        //Debug.Log($"Key {k.ToString()} pressed");
-    }
-    private void OnDpadHold(Vector2 input, float dt)
-    {
-        this.input = input;
-    }
-    public void OnTouch(Touch touch, float dt)
-    {
-        MoveTo(Camera.main.ScreenToWorldPoint(touch.position));
-    }
-
-    void OnMouseHeld(int button, Vector3 position, float dt)
-    {
-        if (button == 0)
-        {
-            MoveTo(Camera.main.ScreenToWorldPoint(position));
-            LookAt(position);
-        }
     }
 
     // Moving
@@ -414,7 +338,7 @@ public class Moveable : MonoBehaviour
 
     public void LookAt(Vector2 targetPosition)
     {
-
+        transform.LookAt2D(targetPosition);
     }
     public void LookAt(Vector2 targetPosition, float dt)
     {
@@ -448,6 +372,11 @@ public class Moveable : MonoBehaviour
     {
         if (eulerAngle != 0)
             transform.Rotate(Vector3.forward, eulerAngle);
+    }
+
+    public void TurnLeft(bool left, float dt)
+    {
+        Turn(TurnRate * dt * (left ? 1 : -1));
     }
 
     public void Turn(float eulerAngle, float dt)
