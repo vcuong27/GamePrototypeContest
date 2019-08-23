@@ -12,6 +12,8 @@ public class Enemy_02 : BaseEnemy
 
     public override void Update()
     {
+        float dt = Time.deltaTime;
+        // TODO: Enemy move AI
         base.Update();
 
     }

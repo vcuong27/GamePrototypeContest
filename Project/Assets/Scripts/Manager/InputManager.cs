@@ -95,7 +95,6 @@ public class InputManager : MonoBehaviour
             debugText += "mouse" + k.ToString();
         }
         //debug.text = debugText;
-
     }
 
     // Update is called once per frame
