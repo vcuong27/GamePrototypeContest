@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Utils : MonoBehaviour
+public class Utils
 {
-    // Start is called before the first frame update
-    void Start()
+    public static float DistanceBetweenTwoPoint(Vector2 pos1, Vector2 pos2)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return (pos1 - pos2).sqrMagnitude;
     }
 }

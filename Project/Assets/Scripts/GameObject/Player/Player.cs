@@ -26,6 +26,12 @@ public class Player : GameObject
     {
         float dt = Time.deltaTime;
 
+
+        //choose target
+        BaseEnemy enemy = FindNearestEnermy();
+        m_CurrentWeapons.SetFireTarget(enemy.transform.position);
+
+
         //change weapon
         if (Input.GetKeyDown(KeyCode.Keypad1))
         {
@@ -45,8 +51,27 @@ public class Player : GameObject
             m_CurrentWeapons = m_listWP[2];
             m_CurrentWeapons.SetUsing(true);
         }
-
     }
 
+
+    private BaseEnemy FindNearestEnermy()
+    {
+        BaseEnemy enemy = GameManager.Instance.GetListEnermy()[0];
+
+        float d = Utils.DistanceBetweenTwoPoint(enemy.transform.position, transform.position);
+
+        Debug.Log("FindNearestEnermy " + d);
+        foreach (var item in GameManager.Instance.GetListEnermy())
+        {
+            float d1 = Utils.DistanceBetweenTwoPoint(item.transform.position, transform.position);
+            if (d > d1)
+            {
+                enemy = item;
+                d = d1;
+            }
+        }
+
+        return enemy;
+    }
 
 }

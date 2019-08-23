@@ -11,6 +11,11 @@ public class BaseWeapons : GameObject
     public float M_FIRE_RATE = 0.05f;
     public float M_BULLET_SPEED = 10.0f;
 
+    public float M_DAMAGE_01 = 10.0f;
+    public float M_DAMAGE_02 = 0.0f;
+    public float M_DAMAGE_INTERVAL = 0.0f;
+    public float M_DAMAGE_DURATION = 0.0f;
+
     protected DamageComponent m_DameComponent;
 
     private Vector2 m_Target;
@@ -29,7 +34,6 @@ public class BaseWeapons : GameObject
         m_delayReloadInStash = M_RELOAD_IN_STASH;
         m_delayFire = 0.0f;
         m_IsFire = true;
-        Debug.Log("BaseWeapons Start");
         m_ListBullet = new List<Bullet>();
         m_isUsing = false;
     }
@@ -90,7 +94,7 @@ public class BaseWeapons : GameObject
     public void SetUsing(bool IsUsing)
     {
         m_isUsing = IsUsing;
-        Debug.Log("SetUsing " + m_isUsing);
+        //Debug.Log("SetUsing " + m_isUsing);
     }
     public void SetFireTarget(Vector2 target)
     {
@@ -130,10 +134,10 @@ public class BaseWeapons : GameObject
     {
         //need implement
         Vector2 veclocity;
-
-        veclocity.x = 0;// M_BULLET_SPEED * Player.Instance.transform.position.x;
-        veclocity.y = M_BULLET_SPEED;// * Player.Instance.transform.position.y;
-
+        veclocity.x = Player.Instance.transform.position.x - m_Target.x;
+        veclocity.y = Player.Instance.transform.position.y - m_Target.y;
+        veclocity.Normalize();
+        veclocity *= -M_BULLET_SPEED;
         return veclocity;
     }
 }

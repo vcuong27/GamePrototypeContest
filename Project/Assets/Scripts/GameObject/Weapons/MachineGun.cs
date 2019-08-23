@@ -5,14 +5,13 @@ using UnityEngine;
 public class MachineGun : BaseWeapons
 {
 
-    private void Start()
+    public override void Start()
     {
-        // set damage for Pistol
-        m_DameComponent = new DamageComponent(10,0,0,0);
+        m_DameComponent = new DamageComponent(M_DAMAGE_01, M_DAMAGE_02,M_DAMAGE_INTERVAL, M_DAMAGE_DURATION);
         base.Start();
     }
 
-    private void Update()
+    public override void Update()
     {
         base.Update();
     }
