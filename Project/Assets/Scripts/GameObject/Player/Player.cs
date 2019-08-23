@@ -10,7 +10,7 @@ public class Player : GameObject
 
 
     //Damage take by enermy
-    private List<DamageComponent> m_CurrentDameTaken;
+    private List<DamageComponent> m_CurrentDameTaken = new List<DamageComponent>();
     //Weapons
     private BaseWeapons m_CurrentWeapons;
     private bool m_IsDie;
@@ -38,13 +38,14 @@ public class Player : GameObject
 
         //choose target and attack
         BaseEnemy enemy = FindNearestEnermy();
-        if (Utils.DistanceBetweenTwoPoint(transform.position, enemy.transform.position) < m_CurrentWeapons.GetAttackRange())
+       // if (Utils.DistanceBetweenTwoPoint(transform.position, enemy.transform.position) < m_CurrentWeapons.GetAttackRange())
         {
+           // Debug.Log("            Attack(enemy);");
             Attack(enemy);
         }
-        else
+//else
         {
-            m_CurrentWeapons.SetUsing(false);
+//m_CurrentWeapons.SetUsing(false);
         }
 
 
@@ -88,7 +89,7 @@ public class Player : GameObject
 
         float d = Utils.DistanceBetweenTwoPoint(enemy.transform.position, transform.position);
 
-        Debug.Log("FindNearestEnermy " + d);
+//Debug.Log("FindNearestEnermy " + d);
         foreach (var item in GameManager.Instance.GetListEnermy())
         {
             float d1 = Utils.DistanceBetweenTwoPoint(item.transform.position, transform.position);

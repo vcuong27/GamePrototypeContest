@@ -19,6 +19,7 @@ public class GameObject : MonoBehaviour
         //init values
         m_Current_Heal = M_MAX_HEAL;
         m_Current_Armor = M_MAX_ARMOR;
+        Debug.Log("m_Current_Heal " + m_Current_Heal);
     }
 
 }

@@ -7,7 +7,7 @@ public class BaseEnemy : GameObject
     public BaseWeapons m_CurrentWeapons;
 
     //Damage taken
-    protected List<DamageComponent> m_CurrentDameTaken;
+    protected List<DamageComponent> m_CurrentDameTaken = new List<DamageComponent>();
     protected bool m_IsDie;
 
     public virtual void Start()

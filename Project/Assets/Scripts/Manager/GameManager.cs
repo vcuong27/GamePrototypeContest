@@ -47,8 +47,8 @@ public class GameManager : MonoBehaviour
         if (m_DelaySpawn <=  0)
         {
             m_DelaySpawn = M_SPAWN_COOLDOWN;
-            BaseEnemy enermy = SpawnEnermy();
-            enermy.transform.position = GetSpawnLocation();
+            //BaseEnemy enermy = SpawnEnermy();
+            //enermy.transform.position = GetSpawnLocation();
         }
         else
         {
