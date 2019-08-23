@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseWeapons : GameObject
+public class BaseWeapons : MonoBehaviour
 {
     public Bullet M_BULLET;
     public int M_NUMBER_BULLETS = 1;
@@ -10,6 +10,8 @@ public class BaseWeapons : GameObject
     public float M_RELOAD_IN_STASH = 10.0f;
     public float M_FIRE_RATE = 0.05f;
     public float M_BULLET_SPEED = 10.0f;
+    public float M_ATTACK_RANGE = 5.0f;
+
 
     public float M_DAMAGE_01 = 10.0f;
     public float M_DAMAGE_02 = 0.0f;
@@ -91,14 +93,21 @@ public class BaseWeapons : GameObject
             }
         }
     }
+
     public void SetUsing(bool IsUsing)
     {
         m_isUsing = IsUsing;
         //Debug.Log("SetUsing " + m_isUsing);
     }
+
     public void SetFireTarget(Vector2 target)
     {
         m_Target = target;
+    }
+
+    public float GetAttackRange()
+    {
+        return M_ATTACK_RANGE;
     }
 
     private void Fire()
@@ -130,7 +139,7 @@ public class BaseWeapons : GameObject
         return bullet;
     }
 
-    Vector2 GetVeclocity()
+    private Vector2 GetVeclocity()
     {
         //need implement
         Vector2 veclocity;

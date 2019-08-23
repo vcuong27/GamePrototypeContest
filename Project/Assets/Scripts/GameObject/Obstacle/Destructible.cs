@@ -2,42 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Destructible : MonoBehaviour
+public class Destructible : GameObject
 {
-    // Receive/Give Damage
-    public float HP => hp;
-    public float MaxHP => maxHP;
 
-    private float hp;
-    private float maxHP;
-
-    private float dot;
-    private float dotInterval;
-    private float nextDOTtick;
-    private float dotTimer;
+    //Damage taken
+    private List<DamageComponent> m_CurrentDameTaken;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        base.Start();
     }
 
     // Update is called once per frame
     void Update()
     {
-        float dt = Time.deltaTime;
-        if (Time.time >= nextDOTtick)
-        {
-            if (Time.time < dotTimer)
-            {
-                hp -= dot;
-            }
-            while (nextDOTtick < Time.time)
-            {
-                nextDOTtick += dotInterval;
-                hp -= dot;
-            }
-        }
+     
         if (HP <= 0)
         {
             Destruct();

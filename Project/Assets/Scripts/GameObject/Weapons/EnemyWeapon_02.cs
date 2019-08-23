@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_01 : BaseEnemy
+public class EnemyWeapon_02 : BaseWeapons
 {
+
     public override void Start()
     {
-        m_DameComponent = new DamageComponent(M_DAMAGE_01, M_DAMAGE_02, M_DAMAGE_INTERVAL, M_DAMAGE_DURATION);
+        m_DameComponent = new DamageComponent(M_DAMAGE_01, M_DAMAGE_02,M_DAMAGE_INTERVAL, M_DAMAGE_DURATION);
         base.Start();
     }
 
@@ -14,4 +15,5 @@ public class Enemy_01 : BaseEnemy
     {
         base.Update();
     }
+
 }

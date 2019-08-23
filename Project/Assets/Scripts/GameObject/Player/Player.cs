@@ -10,7 +10,7 @@ public class Player : GameObject
 
 
     //Damage take by enermy
-    private DamageComponent m_CurrentDameTaken;
+    private List<DamageComponent> m_CurrentDameTaken;
     //Weapons
     private BaseWeapons m_CurrentWeapons;
 
@@ -19,6 +19,7 @@ public class Player : GameObject
         m_CurrentWeapons = m_listWP[0];
         Instance = this;
         m_CurrentWeapons.SetUsing(true);
+        base.Start();
     }
 
 
@@ -29,7 +30,14 @@ public class Player : GameObject
 
         //choose target
         BaseEnemy enemy = FindNearestEnermy();
-        m_CurrentWeapons.SetFireTarget(enemy.transform.position);
+        if (Utils.DistanceBetweenTwoPoint(transform.position, enemy.transform.position) < m_CurrentWeapons.GetAttackRange())
+        {
+            Attack();
+        }
+        else
+        {
+            m_CurrentWeapons.SetUsing(false);
+        }
 
 
         //change weapon
@@ -54,6 +62,11 @@ public class Player : GameObject
     }
 
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // check collision with something
+    }
+
     private BaseEnemy FindNearestEnermy()
     {
         BaseEnemy enemy = GameManager.Instance.GetListEnermy()[0];
@@ -72,6 +85,11 @@ public class Player : GameObject
         }
 
         return enemy;
+    }
+
+    private void Attack()
+    {
+        m_CurrentWeapons.SetFireTarget(enemy.transform.position);
     }
 
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : GameObject
+public class Bullet : MonoBehaviour
 {
 
     private DamageComponent m_DamageComponent;

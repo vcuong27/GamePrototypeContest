@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public float m_ScreenWidth;
     public float m_ScreenHeight;
+    public float M_SPAWN_COOLDOWN;
     public List<BaseEnemy> m_ListEnermyTemplate = new List<BaseEnemy>();
 
 
@@ -24,7 +25,7 @@ public class GameManager : MonoBehaviour
     /// private variable
     /// </summary>
     private List<BaseEnemy> m_ListEnermy = new List<BaseEnemy>();
-
+    private float m_DelaySpawn;
 
 
     private void Start()
@@ -39,11 +40,23 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        float dt = Time.deltaTime;
 
+
+        if (m_DelaySpawn <=  0)
+        {
+            m_DelaySpawn = M_SPAWN_COOLDOWN;
+            BaseEnemy enermy = SpawnEnermy();
+            enermy.transform.position = GetSpawnLocation();
+        }
+        else
+        {
+            m_DelaySpawn -= dt;
+        }
     }
 
 
-    BaseEnemy SpawnEnermy()
+    private BaseEnemy SpawnEnermy()
     {
         foreach (var item in m_ListEnermy)
         {
@@ -55,6 +68,13 @@ public class GameManager : MonoBehaviour
         BaseEnemy enermy = Instantiate(m_ListEnermyTemplate[0], transform.position, Quaternion.identity);
         m_ListEnermy.Add(enermy);
         return enermy;
+    }
+
+    private Vector3 GetSpawnLocation()
+    {
+        Vector3 vec;
+
+        return vec;
     }
 
 }
