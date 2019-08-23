@@ -183,7 +183,7 @@ public class Moveable : MonoBehaviour
         Decelerate(dt);
 
         transform.position += new Vector3(velocity.x * dt, velocity.y * dt, 0f);
-        debug.text = $"Velocity {velocity.ToString()}";
+        //debug.text = $"Velocity {velocity.ToString()}";
         input = Vector2.zero;
     }
 

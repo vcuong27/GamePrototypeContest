@@ -94,7 +94,7 @@ public class InputManager : MonoBehaviour
         {
             debugText += "mouse" + k.ToString();
         }
-        debug.text = debugText;
+        //debug.text = debugText;
 
     }
 

@@ -16,9 +16,7 @@ public class Player : GameObject
 
     private void Start()
     {
-        //m_listWP.Add(new Pistol());
         m_CurrentWeapons = m_listWP[0];
-        //Instantiate(m_CurrentWeapons, transform.position, Quaternion.identity);
         Instance = this;
         m_CurrentWeapons.SetUsing(true);
     }
@@ -27,6 +25,26 @@ public class Player : GameObject
     private void Update()
     {
         float dt = Time.deltaTime;
+
+        //change weapon
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            m_CurrentWeapons.SetUsing(false);
+            m_CurrentWeapons = m_listWP[0];
+            m_CurrentWeapons.SetUsing(true);
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            m_CurrentWeapons.SetUsing(false);
+            m_CurrentWeapons = m_listWP[1];
+            m_CurrentWeapons.SetUsing(true);
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
+            m_CurrentWeapons.SetUsing(false);
+            m_CurrentWeapons = m_listWP[2];
+            m_CurrentWeapons.SetUsing(true);
+        }
 
     }
 
