@@ -227,8 +227,6 @@ public class Moveable : MonoBehaviour
         // Moving
         if (DestinationDistance < acceptableStopDistance && autopilot == true && StopOnArrival)
         {
-            autopilot = false;
-            destination = null;
             Stop();
         }
 
@@ -241,7 +239,8 @@ public class Moveable : MonoBehaviour
         Decelerate(dt);
 
         transform.position += new Vector3(velocity.x * dt, velocity.y * dt, 0f);
-        debug.text = $"Velocity {velocity.ToString()}";
+        if (debug != null)
+            debug.text = $"Velocity {velocity.ToString()}";
         input = Vector2.zero;
     }
 
@@ -322,9 +321,10 @@ public class Moveable : MonoBehaviour
         }
     }
 
-    private void Stop()
+    public void Stop()
     {
         autopilot = false;
+        destination = null;
         input = Vector2.zero;
         velocity = Vector2.zero;
     }

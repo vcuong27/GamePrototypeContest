@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        //Time.timeScale = 0.25f;
         Debug.Log("GameManager start");
         Instance = this;
         Screen.orientation = ScreenOrientation.Portrait;

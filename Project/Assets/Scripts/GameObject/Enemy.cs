@@ -72,6 +72,7 @@ public class Enemy : DamagingComponent
         }
         else
         {
+            moveable.Stop();
             state = EnemyState.Idle;
         }
 

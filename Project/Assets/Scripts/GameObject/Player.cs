@@ -9,6 +9,7 @@ public class Player : Destructible
     public const KeyCode KEY_MOVE_RIGHT = KeyCode.D;
     public const KeyCode KEY_MOVE_UP = KeyCode.W;
     public const KeyCode KEY_MOVE_DOWN = KeyCode.S;
+    public const KeyCode KEY_SWAP = KeyCode.Q;
 
     enum PlayerState
     {
@@ -16,6 +17,8 @@ public class Player : Destructible
         SwapWeapon,
         Reload,
         Attack,
+        Melee,
+        Move,
         Die = -1
     }
 
@@ -31,6 +34,10 @@ public class Player : Destructible
         }
     }
     private Moveable moveable;
+    private Weapon currentWeapon;
+    [SerializeField]
+    private List<Weapon> backpack;
+
     [SerializeField]
     private Weapon weapon;
 
@@ -44,7 +51,6 @@ public class Player : Destructible
     //
     private Animator body;
     private Animator feet;
-
 
 
     // 
@@ -62,6 +68,7 @@ public class Player : Destructible
         InputManager.Default.OnDpadHold += OnDpadHold;
         InputManager.Default.OnTouch += OnTouch;
 
+        weapon = GetComponentInChildren<Weapon>();
         moveable = GetComponent<Moveable>();
         body = GetComponent<Animator>();
         feet = GetComponentsInChildren<Animator>()[1];
@@ -82,12 +89,22 @@ public class Player : Destructible
             state = PlayerState.Attack;
             Attack();
         }
+        else if (!weapon.Ready)
+        {
+            state = PlayerState.Reload;
+            weapon.StopFire();
+        }
         else
         {
+            weapon.StopFire();
             state = PlayerState.Idle;
         }
         feet.SetInteger("state", (int)moveable.State);
-        body.SetInteger("state", (int)state);
+        if (state == PlayerState.Idle && moveable.State != Moveable.MovingState.Stop)
+        {
+            body.SetInteger("state", (int)PlayerState.Move);
+        }
+        else body.SetInteger("state", (int)state);
     }
 
 
@@ -155,12 +172,6 @@ public class Player : Destructible
         }
     }
 
-
-    private void Reload()
-    {
-
-    }
-
     private void Attack()
     {
         weapon.Fire();
@@ -168,6 +179,7 @@ public class Player : Destructible
 
     protected override void Destruct()
     {
+        weapon.StopFire();
         state = PlayerState.Die;
         base.Destruct();
     }

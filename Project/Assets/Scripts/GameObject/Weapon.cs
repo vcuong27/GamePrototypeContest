@@ -6,8 +6,9 @@ using UnityEngine;
 [Serializable]
 public class Weapon : MonoBehaviour
 {
-    public bool Ready;
+    public bool Ready => !OutOfAmmo && !Reloading;
     public bool OutOfAmmo => nextBullet >= magSize;
+    public int BulletRemains => magSize - nextBullet;
 
 
 
@@ -15,6 +16,7 @@ public class Weapon : MonoBehaviour
     private float attackRange;
     [SerializeField]
     private float rateOfFire;
+    public float FireRate => 60 / rateOfFire;
     [SerializeField]
     private float reloadTime;
     [SerializeField]
@@ -27,72 +29,106 @@ public class Weapon : MonoBehaviour
     private int overheatMax;
     [SerializeField]
     private Bullet bullet;
-
-    private bool reloading;
+    [SerializeField]
+    private bool reloading = false;
+    public bool Reloading
+    {
+        get
+        {
+            return reloading;
+        }
+        set
+        {
+            if (value == reloading) return;
+            if (value)
+            {
+                reloadTimer = Time.time + reloadTime;
+            }
+            else reloadTimer = Mathf.Infinity;
+            reloading = value;
+        }
+    }
     private float reloadTimer;
-    private float nextFire;
+    private float nextFire = float.PositiveInfinity;
     [SerializeField]
     private bool firing;
+    public bool Firing => firing;
 
     private List<Bullet> bullets = new List<Bullet>();
     private int nextBullet;
 
+    private Animator muzzleflash;
+
     // Start is called before the first frame update
     void Start()
     {
+        muzzleflash = GetComponent<Animator>();
         nextBullet = 0;
         for (int i = 0; i < magSize; i++)
         {
-            Bullet newBullet = Instantiate(bullet);
-            newBullet.enabled = false;
-            newBullet.GetComponent<Moveable>().StopOnArrival = false;
-            newBullet.GetComponent<Moveable>().linearspeed = true;
-            bullets.Add(newBullet);
+            //Bullet newBullet = Instantiate(bullet);
+            //newBullet.enabled = false;
+            //newBullet.GetComponent<Moveable>().StopOnArrival = false;
+            //newBullet.GetComponent<Moveable>().linearspeed = true;
+            //bullets.Add(newBullet);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (reloadTimer < Time.time && Reloading)
+        {
+            nextBullet = 0;
+            Reloading = false;
+        }
+
         if (OutOfAmmo)
         {
-            if (reloadTimer < Time.time && !reloading)
-            {
-                nextBullet = 0;
-            }
+            Reloading = true;
+            firing = false;
         }
         else if (firing)
         {
-            if (nextFire < Time.time)
+            while (nextFire < Time.time)
             {
-                if (!OutOfAmmo)
-                {
-                    bullets[nextBullet].transform.position = transform.position;
-                    bullets[nextBullet].enabled = true;
-                    bullets[nextBullet].GetComponent<Moveable>().MoveTo(transform.up);
-                    bullets[nextBullet].GetComponent<Moveable>().LookAt(transform.up);
-                }
-                else
-                {
-                    reloading = true;
-                }
+                //bullets[nextBullet].transform.position = transform.position;
+                //bullets[nextBullet].enabled = true;
+                //bullets[nextBullet].GetComponent<Moveable>().MoveTo(transform.up);
+                //bullets[nextBullet].GetComponent<Moveable>().LookAt(transform.up);
+                nextFire += FireRate;
+                nextBullet++;
             }
+        }
+
+        if (!firing)
+        {
+
+            muzzleflash.SetBool("trigger", false);
         }
     }
 
-    internal void Fire()
+    public void Fire()
     {
+        if (firing) return;
+        muzzleflash.SetBool("trigger", true);
         firing = true;
-        nextFire = Time.time + 1 / rateOfFire;
+        nextFire = Time.time + FireRate;
+    }
+
+    public void StopFire()
+    {
+        firing = false;
     }
 
     private void OnDisable()
     {
-        reloading = false;
+        Reloading = false;
     }
 
     private void OnEnable()
     {
-        reloading = true;
+        if (OutOfAmmo)
+            Reloading = true;
     }
 }
