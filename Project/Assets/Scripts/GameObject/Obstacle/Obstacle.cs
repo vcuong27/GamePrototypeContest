@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Obstacle : GameObject
+public class Obstacle : CustumGameObject
 {
     void Start()
     {

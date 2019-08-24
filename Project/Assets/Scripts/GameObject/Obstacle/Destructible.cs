@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Destructible : GameObject
+public class Destructible : CustumGameObject
 {
 
     //Damage taken

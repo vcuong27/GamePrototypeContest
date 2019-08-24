@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseEnemy : GameObject
+public class BaseEnemy : CustumGameObject
 {
     public BaseWeapons m_CurrentWeapons;
 

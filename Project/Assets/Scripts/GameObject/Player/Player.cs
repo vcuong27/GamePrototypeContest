@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : GameObject
+public class Player : CustumGameObject
 {
     public static Player Instance;
     public List<BaseWeapons> m_listWP = new List<BaseWeapons>();
@@ -14,13 +14,16 @@ public class Player : GameObject
     //Weapons
     private BaseWeapons m_CurrentWeapons;
     private bool m_IsDie;
-
+    [SerializeField]
+    private float m_attackRange;
     private void Start()
     {
         m_CurrentWeapons = m_listWP[0];
         Instance = this;
         m_CurrentWeapons.SetUsing(true);
         m_IsDie = false;
+        m_attackRange = m_CurrentWeapons.GetAttackRange();
+
         base.Start();
     }
 
@@ -38,14 +41,15 @@ public class Player : GameObject
 
         //choose target and attack
         BaseEnemy enemy = FindNearestEnermy();
-       // if (Utils.DistanceBetweenTwoPoint(transform.position, enemy.transform.position) < m_CurrentWeapons.GetAttackRange())
+        float d = Utils.DistanceBetweenTwoPoint(transform.position, enemy.transform.position);
+        if (d < m_attackRange)
         {
-           // Debug.Log("            Attack(enemy);");
+            m_CurrentWeapons.SetUsing(true);
             Attack(enemy);
         }
-//else
+        else
         {
-//m_CurrentWeapons.SetUsing(false);
+            m_CurrentWeapons.SetUsing(false);
         }
 
 
@@ -59,18 +63,22 @@ public class Player : GameObject
             m_CurrentWeapons.SetUsing(false);
             m_CurrentWeapons = m_listWP[0];
             m_CurrentWeapons.SetUsing(true);
+            m_attackRange = m_CurrentWeapons.GetAttackRange();
         }
         if (Input.GetKeyDown(KeyCode.Keypad2))
         {
             m_CurrentWeapons.SetUsing(false);
             m_CurrentWeapons = m_listWP[1];
             m_CurrentWeapons.SetUsing(true);
+            m_attackRange = m_CurrentWeapons.GetAttackRange();
         }
         if (Input.GetKeyDown(KeyCode.Keypad3))
         {
             m_CurrentWeapons.SetUsing(false);
             m_CurrentWeapons = m_listWP[2];
             m_CurrentWeapons.SetUsing(true);
+            m_attackRange = m_CurrentWeapons.GetAttackRange();
+
         }
     }
 
@@ -89,7 +97,7 @@ public class Player : GameObject
 
         float d = Utils.DistanceBetweenTwoPoint(enemy.transform.position, transform.position);
 
-//Debug.Log("FindNearestEnermy " + d);
+        //Debug.Log("FindNearestEnermy " + d);
         foreach (var item in GameManager.Instance.GetListEnermy())
         {
             float d1 = Utils.DistanceBetweenTwoPoint(item.transform.position, transform.position);

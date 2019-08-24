@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameObject : MonoBehaviour
+public class CustumGameObject : MonoBehaviour
 {
     //Default value for game
     public float    M_MAX_HEAL     = 100;
