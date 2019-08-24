@@ -49,8 +49,7 @@ public class Bullet : MonoBehaviour
 
     public void SetActive(bool active)
     {
-        enabled = active;
-        GetComponent<Renderer>().enabled = active;
+        gameObject.SetActive(active);
     }
 
     private void Moving(float dt)

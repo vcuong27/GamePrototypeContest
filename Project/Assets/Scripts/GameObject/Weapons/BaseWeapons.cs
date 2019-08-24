@@ -126,16 +126,7 @@ public class BaseWeapons : MonoBehaviour
 
     private Bullet SpawnBullet()
     {
-        foreach (var item in m_ListBullet)
-        {
-            if (item.enabled == false)
-            {
-                return item;
-            }
-        }
-        Bullet bullet = Instantiate(M_BULLET, transform.position, Quaternion.identity);
-        m_ListBullet.Add(bullet);
-        return bullet;
+        return ObjectsPool< Bullet>.GetInstance(M_BULLET.gameObject);
     }
 
     private Vector2 GetVeclocity()

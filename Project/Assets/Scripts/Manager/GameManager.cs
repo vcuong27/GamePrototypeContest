@@ -59,14 +59,7 @@ public class GameManager : MonoBehaviour
 
     private BaseEnemy SpawnEnermy()
     {
-        foreach (var item in m_ListEnermy)
-        {
-            if (item.enabled == false)
-            {
-                return item;
-            }
-        }
-        BaseEnemy enermy = Instantiate(m_ListEnermyTemplate[0], transform.position, Quaternion.identity);
+        BaseEnemy enermy = ObjectsPool<BaseEnemy>.GetInstance(m_ListEnermyTemplate[0].gameObject);
         m_ListEnermy.Add(enermy);
         return enermy;
     }

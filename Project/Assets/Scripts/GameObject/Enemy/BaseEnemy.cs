@@ -52,8 +52,7 @@ public class BaseEnemy : CustumGameObject
 
     public void SetActive(bool active)
     {
-        enabled = active;
-        GetComponent<Renderer>().enabled = active;
+        gameObject.SetActive(active);
     }
 
     private void Attack()
