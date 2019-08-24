@@ -15,4 +15,4 @@ Create your OWN TEST SCENE/Prefabs Edit this cause merge problem
 Follow instruction to debug in android device
 https://docs.unity3d.com/2018.1/Documentation/Manual/UnityRemote5.html
 If not work try this
-https://answers.unity.com/questions/1628598/set-up-android-sdk-path-to-make-android-remote-wor.html
+https://answers.unity.com/questions/1628598/set-up-android-sdk-path-to-make-android-remote-wor.html 
