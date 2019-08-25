@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Destructible : MonoBehaviour
 {
+    public delegate IEnumerator OnDestructCallBacks(Destructible destructible);
     // Receive/Give Damage
     public float HP => hp;
     public float MaxHP => maxHP;
@@ -19,6 +20,7 @@ public class Destructible : MonoBehaviour
     private float nextDOTtick;
     [SerializeField]
     private float dotTimer;
+    public event OnDestructCallBacks OnDestruct;
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +36,7 @@ public class Destructible : MonoBehaviour
 
         if (HP <= 0)
         {
-            Destruct();
+            StartCoroutine(Destruct());
         }
 
         if (Time.time >= nextDOTtick && dotInterval > 0)
@@ -69,11 +71,13 @@ public class Destructible : MonoBehaviour
     {
         hp = maxHP;
     }
-    protected virtual void Destruct()
+    protected virtual IEnumerator Destruct()
     {
         // TODO: Destruction goes here;
         // temporary
         Debug.Log("ded");
+        yield return OnDestruct?.Invoke(this);
+        //yield return new WaitForSeconds(1);
         gameObject.SetActive(false);
     }
 }

@@ -9,6 +9,7 @@ public class Weapon : MonoBehaviour
     [SerializeField]
     private Bullet bullet;
 
+
     public bool Ready => !OutOfAmmo && !Reloading;
     public bool OutOfAmmo => nextBullet >= magSize;
     public int BulletRemains => magSize - nextBullet;
@@ -23,6 +24,7 @@ public class Weapon : MonoBehaviour
     private float reloadTime;
     [SerializeField]
     private int magSize;
+    public int MagSize => magSize;
     [SerializeField]
     private int overheatBuildUp;
     [SerializeField]
@@ -57,12 +59,12 @@ public class Weapon : MonoBehaviour
     private List<Bullet> bullets = new List<Bullet>();
     private int nextBullet;
 
-    private Animator muzzleflash;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
-        muzzleflash = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         nextBullet = 0;
         for (int i = 0; i < magSize; i++)
         {
@@ -75,6 +77,7 @@ public class Weapon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (reloadTimer < Time.time && Reloading)
         {
             nextBullet = 0;
@@ -90,6 +93,7 @@ public class Weapon : MonoBehaviour
         {
             while (nextFire < Time.time)
             {
+                Debug.Log($"{nextBullet}");
                 bullets[nextBullet].transform.position = transform.position;
                 bullets[nextBullet].transform.up = targetVector;
                 //Debug.Log($"bulet {bullets[nextBullet].name} enabled: {bullets[nextBullet].enabled} ");
@@ -101,15 +105,16 @@ public class Weapon : MonoBehaviour
 
         if (!firing)
         {
-
-            muzzleflash.SetBool("trigger", false);
+            if (animator)
+                animator.SetBool("trigger", false);
         }
     }
 
     public void Fire()
     {
         if (firing) return;
-        muzzleflash.SetBool("trigger", true);
+        if (animator)
+            animator.SetBool("trigger", true);
         firing = true;
         nextFire = Time.time + FireRate;
     }
@@ -128,5 +133,10 @@ public class Weapon : MonoBehaviour
     {
         if (OutOfAmmo)
             Reloading = true;
+    }
+
+    private void HitScan()
+    {
+
     }
 }

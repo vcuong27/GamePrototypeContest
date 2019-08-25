@@ -10,12 +10,14 @@ public class Enemy : MonoBehaviour
         Engage,
         Attack,
         Flee,
-        Die
+        Die = -1
     }
 
-    [SerializeField]
-    private Player target;
+    public Player Target => GameManager.Instance.players[0];
     private Moveable moveable;
+    private Destructible heath;
+    [SerializeField]
+    private Weapon weapon;
 
 
     [SerializeField]
@@ -29,8 +31,22 @@ public class Enemy : MonoBehaviour
     private float attackRange;
     [SerializeField]
     private float detectRange;
+    private float DetectRange
+    {
+        get
+        {
+            return detectRange * (((heath.HP - heath.MaxHP) < 0) ? 2 : 1);
+        }
+    }
     [SerializeField]
     private float outOfContactRange;
+    private float OutOfContactRange
+    {
+        get
+        {
+            return outOfContactRange * (((heath.HP - heath.MaxHP) < 0) ? 2 : 1);
+        }
+    }
     [SerializeField]
     private EnemyState state = EnemyState.Idle;
     //
@@ -38,61 +54,100 @@ public class Enemy : MonoBehaviour
 
 
     // 
-    private float TargetDistance => DistanceVector.magnitude;
-    private Vector2 DistanceVector => (Vector2)(target.transform.position - transform.position);
-    private float TargetAngle => Vector2.SignedAngle(target.transform.position - transform.position, transform.up);
-    private Vector2 Position => transform.position;
+    private float TargetDistance => TargetVector.magnitude;
 
+    private Vector2 TargetVector => Target != null ? (Vector2)(Target.transform.position - transform.position) : Vector2.up;
+    private float TargetAngle => Vector2.SignedAngle(Target.transform.position - transform.position, transform.up);
+    private Vector2 Position => transform.position;
 
     // Start is called before the first frame update
     void Start()
     {
+        weapon = GetComponentInChildren<Weapon>();
         moveable = GetComponent<Moveable>();
         animator = GetComponent<Animator>();
+        heath = GetComponent<Destructible>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (weapon)
+            weapon.targetVector = TargetVector;
+        if (moveable && Target != null && !Target.isActiveAndEnabled)
+            moveable.target = null;
+
+        if (moveable && Target)
+        {
+            moveable.target = Target.transform;
+        }
+        else
+        {
+            if (weapon)
+                weapon.StopFire();
+            moveable.Stop();
+            state = EnemyState.Idle;
+            animator.SetInteger("state", (int)state);
+            return;
+        }
+
         if (TargetDistance < fleeRange)
         {
             state = EnemyState.Flee;
+            if (weapon)
+                weapon.StopFire();
             Flee();
 
         }
-        else if (TargetDistance < attackRange)
+        else if (TargetDistance < attackRange && weapon.Ready)
         {
             state = EnemyState.Attack;
             Attack();
         }
-        else if (TargetDistance < outOfContactRange)
+        else if (TargetDistance < attackRange)
         {
+            //
+        }
+        else if (TargetDistance < DetectRange)
+        {
+            if (weapon)
+                weapon.StopFire();
+            state = EnemyState.Engage;
+            Engage();
+        }
+        else if (TargetDistance < OutOfContactRange && state == EnemyState.Engage)
+        {
+            if (weapon)
+                weapon.StopFire();
             state = EnemyState.Engage;
             Engage();
         }
         else
         {
+            if (weapon)
+                weapon.StopFire();
             moveable.Stop();
             state = EnemyState.Idle;
         }
 
-        animator.SetInteger(0, (int)state);
+        animator.SetInteger("state", (int)state);
     }
 
 
     private void Engage()
     {
-        Vector2 engagePosition = DistanceVector * (TargetDistance - attackRange) + Position;
+        Vector2 engagePosition = TargetVector * (TargetDistance - attackRange + 0.5f) + Position;
         moveable.MoveTo(engagePosition);
     }
 
     private void Attack()
     {
+        weapon.Fire();
     }
 
     private void Flee()
     {
-        Vector2 fleePosition = DistanceVector * (TargetDistance - attackRange) + Position;
+        Vector2 fleePosition = TargetVector * (TargetDistance - attackRange) + Position;
         moveable.MoveTo(fleePosition);
     }
 

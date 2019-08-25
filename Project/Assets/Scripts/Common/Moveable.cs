@@ -357,11 +357,11 @@ public class Moveable : MonoBehaviour
             if (maximumAngle > Mathf.Abs(targetAngle))
             {
                 Turn(TargetAngle);
-                Debug.Log("snap");
+                //Debug.Log("snap");
             }
             else
             {
-                Debug.Log("turn");
+                //Debug.Log("turn");
                 Turn(maximumAngle * targetAngle / Mathf.Abs(targetAngle));
             }
 

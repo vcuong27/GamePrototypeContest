@@ -22,24 +22,16 @@ public class Player : MonoBehaviour
         Die = -1
     }
 
-    [SerializeField]
-    private Enemy target;
-    public Enemy Target
-    {
-        get
-        {
-            return target;
-        }
-        set
-        {
-            target = value;
-            moveable.target = target.transform;
-        }
-    }
+    public Enemy Target => GameManager.Instance.GetClosestEnemy(transform.position);
     private Moveable moveable;
     private Weapon currentWeapon;
     [SerializeField]
     private List<Weapon> backpack;
+    [SerializeField]
+    private HeathBarUI heathBarUI => GameManager.Instance.heathBarUI;
+    private Destructible heath;
+    [SerializeField]
+    private MagazineUI magazineUI => GameManager.Instance.magazineUI;
 
     [SerializeField]
     private Weapon weapon;
@@ -58,8 +50,8 @@ public class Player : MonoBehaviour
 
     // 
     private float TargetDistance => TargetVector.magnitude;
-    private Vector2 TargetVector => target != null ? (Vector2)(target.transform.position - transform.position) : Vector2.up;
-    private float TargetAngle => Vector2.SignedAngle(target.transform.position - transform.position, transform.up);
+    private Vector2 TargetVector => Target != null ? (Vector2)(Target.transform.position - transform.position) : Vector2.up;
+    private float TargetAngle => Vector2.SignedAngle(Target.transform.position - transform.position, transform.up);
     private Vector2 Position => transform.position;
 
 
@@ -75,25 +67,33 @@ public class Player : MonoBehaviour
         body = GetComponentsInChildren<Animator>()[0];
         weapon = GetComponentInChildren<Weapon>();
         feet = GetComponentsInChildren<Animator>()[2];
-        Target = target;
+        heath = GetComponent<Destructible>();
+
+        if (heath) heath.OnDestruct += Ondestruct;
     }
 
     // Update is called once per frame
     void Update()
     {
         weapon.targetVector = TargetVector;
-        if (target != null && !target.isActiveAndEnabled)
+        heathBarUI.percentage = heath.HP / heath.MaxHP;
+        if (heath.HP <= 0) return;
+        if (magazineUI)
+            magazineUI.remainingAmmo = 1.0f * weapon.BulletRemains / weapon.MagSize;
+
+
+        if (moveable && Target)
         {
-            target = null;
-            moveable.target = null;
+            moveable.target = Target.transform;
         }
+        if (moveable && Target != null && !Target.isActiveAndEnabled) moveable.target = null;
         if (state == PlayerState.Die)
         {
             body.SetInteger("state", (int)state);
             return;
         }
 
-        if (target != null && TargetDistance < attackRange && weapon.Ready)
+        if (Target != null && TargetDistance < attackRange && weapon.Ready)
         {
             state = PlayerState.Attack;
             Attack();
@@ -101,7 +101,6 @@ public class Player : MonoBehaviour
         else if (!weapon.Ready)
         {
             state = PlayerState.Reload;
-            weapon.StopFire();
         }
         else
         {
@@ -190,6 +189,14 @@ public class Player : MonoBehaviour
     {
         weapon.StopFire();
         state = PlayerState.Die;
+    }
+    private IEnumerator Ondestruct(Destructible destructible)
+    {
+        InputManager.Default.OnKeyHold -= OnKeyHeld;
+        InputManager.Default.OnMouseHold -= OnMouseHeld;
+        InputManager.Default.OnDpadHold -= OnDpadHold;
+        InputManager.Default.OnTouch -= OnTouch;
+        yield return new WaitForSeconds(0.4f);
     }
 
 }

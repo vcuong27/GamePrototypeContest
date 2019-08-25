@@ -12,4 +12,13 @@ public static class UnityExentsion
     //    transform.up = newUp;
     //}
 
+
+    public static Color GetColor(this string fromHex)
+    {
+        Color color;
+        if (ColorUtility.TryParseHtmlString(fromHex, out color))
+            return color;
+        return new Color();
+
+    }
 }
