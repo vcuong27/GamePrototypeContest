@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 222545395675774175}
   - component: {fileID: 222545395675774172}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: tracer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,9 @@ GameObject:
   - component: {fileID: 222545396475409372}
   - component: {fileID: 222545396475409375}
   - component: {fileID: 222545396475409373}
-  m_Layer: 0
+  - component: {fileID: 6651336830995589205}
+  - component: {fileID: -1347904104522914440}
+  m_Layer: 10
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
@@ -176,3 +178,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   muzzleVelocity: 715
   drag: 0
+--- !u!114 &6651336830995589205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 222545396475409374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 074822f5d26657547ae6325cd2d00395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  dot: 0
+  dotInterval: 0
+  dotDuration: 0
+--- !u!61 &-1347904104522914440
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 222545396475409374}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.006182447, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.3, y: 0.6}
+    newSize: {x: 0.3, y: 10}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.23817578, y: 0.6}
+  m_EdgeRadius: 0

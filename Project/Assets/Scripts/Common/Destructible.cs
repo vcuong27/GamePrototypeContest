@@ -29,27 +29,31 @@ public class Destructible : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         float dt = Time.deltaTime;
-        if (Time.time >= nextDOTtick)
+
+        if (HP <= 0)
+        {
+            Destruct();
+        }
+
+        if (Time.time >= nextDOTtick && dotInterval > 0)
         {
             if (Time.time < dotTimer)
             {
                 hp -= dot;
             }
-            while (nextDOTtick < Time.time)
+            while (nextDOTtick < Time.time && nextDOTtick < dotTimer)
             {
                 nextDOTtick += dotInterval;
                 hp -= dot;
             }
         }
-        if (HP <= 0)
-        {
-            Destruct();
-        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
+        //Debug.Log("hit");
         DamagingComponent damaging = collision.gameObject.GetComponent<DamagingComponent>();
         if (damaging != null)
         {
@@ -61,10 +65,15 @@ public class Destructible : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        hp = maxHP;
+    }
     protected virtual void Destruct()
     {
         // TODO: Destruction goes here;
         // temporary
-        Destroy(gameObject);
+        Debug.Log("ded");
+        gameObject.SetActive(false);
     }
 }

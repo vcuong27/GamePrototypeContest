@@ -13,7 +13,7 @@ public class Moveable : MonoBehaviour
         left,
         right
     }
-
+    //TODO: change to quaternion instead of euler avoid gimbal lock
     public delegate Vector2 GetControllerInput();
 
     public static readonly float HIT_WALL_DAZED_TIME = 0.3f;
@@ -221,9 +221,13 @@ public class Moveable : MonoBehaviour
         // Turning
         if (target != null && !moveForward)
             LookAt(target.position, dt);
-        if (destination != null && moveForward)
+        else if (target == null && destination != null)
         {
             LookAt(destination.Value, dt);
+        }
+        else
+        {
+            LookAt((Vector2)transform.position + input, dt);
         }
 
 
@@ -342,10 +346,6 @@ public class Moveable : MonoBehaviour
         autopilot = true;
     }
 
-    public void LookAt(Vector2 targetPosition)
-    {
-        transform.LookAt2D(targetPosition);
-    }
     public void LookAt(Vector2 targetPosition, float dt)
     {
         float targetAngle = 0;
@@ -356,12 +356,12 @@ public class Moveable : MonoBehaviour
             float maximumAngle = TurnRate * dt;
             if (maximumAngle > Mathf.Abs(targetAngle))
             {
-                transform.LookAt2D(targetPosition);//snap
-                                                   //Debug.Log("snap");
+                Turn(TargetAngle);
+                Debug.Log("snap");
             }
             else
             {
-                //Debug.Log("turn");
+                Debug.Log("turn");
                 Turn(maximumAngle * targetAngle / Mathf.Abs(targetAngle));
             }
 
@@ -377,7 +377,7 @@ public class Moveable : MonoBehaviour
     public void Turn(float eulerAngle)
     {
         if (eulerAngle != 0)
-            transform.Rotate(Vector3.forward, eulerAngle);
+            transform.Rotate(new Vector3(0,0, eulerAngle));
     }
 
     public void TurnLeft(bool left, float dt)
@@ -387,8 +387,7 @@ public class Moveable : MonoBehaviour
 
     public void Turn(float eulerAngle, float dt)
     {
-        if (eulerAngle != 0)
-            Turn(eulerAngle * dt);
+        Turn(eulerAngle * dt);
     }
 
 

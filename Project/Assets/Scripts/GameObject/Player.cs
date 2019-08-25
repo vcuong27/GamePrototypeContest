@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Destructible
+public class Player : MonoBehaviour
 {
     // Keybinding
     public const KeyCode KEY_MOVE_LEFT = KeyCode.A;
@@ -58,7 +58,7 @@ public class Player : Destructible
 
     // 
     private float TargetDistance => TargetVector.magnitude;
-    private Vector2 TargetVector => (target.transform.position - transform.position);
+    private Vector2 TargetVector => target != null ? (Vector2)(target.transform.position - transform.position) : Vector2.up;
     private float TargetAngle => Vector2.SignedAngle(target.transform.position - transform.position, transform.up);
     private Vector2 Position => transform.position;
 
@@ -82,13 +82,18 @@ public class Player : Destructible
     void Update()
     {
         weapon.targetVector = TargetVector;
+        if (target != null && !target.isActiveAndEnabled)
+        {
+            target = null;
+            moveable.target = null;
+        }
         if (state == PlayerState.Die)
         {
             body.SetInteger("state", (int)state);
             return;
         }
 
-        if (TargetDistance < attackRange && weapon.Ready)
+        if (target != null && TargetDistance < attackRange && weapon.Ready)
         {
             state = PlayerState.Attack;
             Attack();
@@ -181,10 +186,10 @@ public class Player : Destructible
         weapon.Fire();
     }
 
-    protected override void Destruct()
+    private void OnDisable()
     {
         weapon.StopFire();
         state = PlayerState.Die;
-        base.Destruct();
     }
+
 }

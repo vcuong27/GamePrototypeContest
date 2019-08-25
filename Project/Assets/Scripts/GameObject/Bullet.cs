@@ -33,12 +33,12 @@ public class Bullet : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log($"OnEnable {name}");
+        //Debug.Log($"OnEnable {name}");
     }
 
     private void OnDisable()
     {
-        Debug.Log($"OnDisable {name}");
+        //Debug.Log($"OnDisable {name}");
     }
 
     void Explode()

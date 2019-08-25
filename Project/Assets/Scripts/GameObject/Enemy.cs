@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : DamagingComponent
+public class Enemy : MonoBehaviour
 {
     enum EnemyState
     {
@@ -95,4 +95,5 @@ public class Enemy : DamagingComponent
         Vector2 fleePosition = DistanceVector * (TargetDistance - attackRange) + Position;
         moveable.MoveTo(fleePosition);
     }
+
 }

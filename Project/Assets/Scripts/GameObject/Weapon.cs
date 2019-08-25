@@ -92,7 +92,7 @@ public class Weapon : MonoBehaviour
             {
                 bullets[nextBullet].transform.position = transform.position;
                 bullets[nextBullet].transform.up = targetVector;
-                Debug.Log($"bulet {bullets[nextBullet].name} enabled: {bullets[nextBullet].enabled} ");
+                //Debug.Log($"bulet {bullets[nextBullet].name} enabled: {bullets[nextBullet].enabled} ");
                 bullets[nextBullet].gameObject.SetActive(true);
                 nextFire += FireRate;
                 nextBullet++;

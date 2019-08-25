@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 356252079}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -766,7 +766,7 @@ GameObject:
   - component: {fileID: 1848869890}
   m_Layer: 0
   m_Name: InputManager
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1051,11 +1051,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 197211401325035323, guid: d41d6c64c9700cf4781aeed758df49ec,
-        type: 3}
-      propertyPath: target
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d41d6c64c9700cf4781aeed758df49ec, type: 3}
@@ -1411,6 +1406,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 327759396602825053, guid: 5f86e1b988c12d94583270afc47f1354,
+        type: 3}
+      propertyPath: maxHP
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7364427822603566819, guid: 5f86e1b988c12d94583270afc47f1354,
         type: 3}
       propertyPath: m_Name
@@ -1420,6 +1420,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
+        type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1009022478}
+    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
+        type: 3}
+      propertyPath: fleeRange
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
+        type: 3}
+      propertyPath: attackRange
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
+        type: 3}
+      propertyPath: detectRange
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
+        type: 3}
+      propertyPath: outOfContactRange
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
+        type: 3}
+      propertyPath: maxHP
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7364427822603566820, guid: 5f86e1b988c12d94583270afc47f1354,
         type: 3}
@@ -1475,35 +1505,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
-        type: 3}
-      propertyPath: target
-      value: 
-      objectReference: {fileID: 1009022478}
-    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
-        type: 3}
-      propertyPath: fleeRange
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
-        type: 3}
-      propertyPath: attackRange
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
-        type: 3}
-      propertyPath: detectRange
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7364427822603566821, guid: 5f86e1b988c12d94583270afc47f1354,
-        type: 3}
-      propertyPath: outOfContactRange
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 450431646, guid: 5f86e1b988c12d94583270afc47f1354, type: 3}
-      propertyPath: maxVelocity
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f86e1b988c12d94583270afc47f1354, type: 3}
