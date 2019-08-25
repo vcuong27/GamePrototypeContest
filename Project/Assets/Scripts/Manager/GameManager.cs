@@ -75,5 +75,8 @@ public class GameManager : MonoBehaviour
             }
         }
         return target;
+        //BaseEnemy enermy = ObjectsPool<BaseEnemy>.GetInstance(m_ListEnermyTemplate[0].gameObject);
+        //m_ListEnermy.Add(enermy);
+        //return enermy;
     }
 }
