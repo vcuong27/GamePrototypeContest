@@ -9,10 +9,13 @@ public class DamagingComponent : MonoBehaviour
     public float DOT => dot;// damage over time
     public float DOTDuration => dotDuration;
     public float DOTInterval => dotInterval;
-
+    [SerializeField]
     private float damage;
+    [SerializeField]
     private float dot;
+    [SerializeField]
     private float dotInterval;
+    [SerializeField]
     private float dotDuration;
 
     // Start is called before the first frame update

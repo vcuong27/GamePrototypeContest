@@ -98,7 +98,7 @@ GameObject:
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -234,6 +234,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c18e38c3a9952e4e9eb9196e7a58645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 0
+  dot: 0
+  dotInterval: 0
+  dotDuration: 0
   target: {fileID: 0}
   attackRadius: 0
   attackInterval: 0

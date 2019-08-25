@@ -222,17 +222,19 @@ public class Moveable : MonoBehaviour
         if (target != null && !moveForward)
             LookAt(target.position, dt);
         if (destination != null && moveForward)
-            LookAt(destination.Value, dt);
-
-        // Moving
-        if (DestinationDistance < acceptableStopDistance && autopilot == true && StopOnArrival)
         {
-            Stop();
+            LookAt(destination.Value, dt);
         }
+
 
         if (autopilot)
         {
-            input = DestinationVector;
+            input = moveForward ? onward : DestinationVector;
+        }
+        // Moving
+        if (StopOnArrival && DestinationDistance < acceptableStopDistance && autopilot == true)
+        {
+            Stop();
         }
         Acelerate(dt);
         // Object always want to rest
@@ -242,6 +244,10 @@ public class Moveable : MonoBehaviour
         if (debug != null)
             debug.text = $"Velocity {velocity.ToString()}";
         input = Vector2.zero;
+        if (!StopOnArrival)
+        {
+            destination = (Vector2)transform.position + input;
+        }
     }
 
     // Moving

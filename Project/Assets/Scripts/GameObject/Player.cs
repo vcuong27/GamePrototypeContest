@@ -26,7 +26,10 @@ public class Player : Destructible
     private Enemy target;
     public Enemy Target
     {
-        get { return target; }
+        get
+        {
+            return target;
+        }
         set
         {
             target = value;
@@ -68,16 +71,17 @@ public class Player : Destructible
         InputManager.Default.OnDpadHold += OnDpadHold;
         InputManager.Default.OnTouch += OnTouch;
 
-        weapon = GetComponentInChildren<Weapon>();
         moveable = GetComponent<Moveable>();
-        body = GetComponent<Animator>();
-        feet = GetComponentsInChildren<Animator>()[1];
+        body = GetComponentsInChildren<Animator>()[0];
+        weapon = GetComponentInChildren<Weapon>();
+        feet = GetComponentsInChildren<Animator>()[2];
         Target = target;
     }
 
     // Update is called once per frame
     void Update()
     {
+        weapon.targetVector = TargetVector;
         if (state == PlayerState.Die)
         {
             body.SetInteger("state", (int)state);

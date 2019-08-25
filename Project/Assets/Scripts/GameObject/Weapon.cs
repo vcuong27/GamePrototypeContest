@@ -6,12 +6,14 @@ using UnityEngine;
 [Serializable]
 public class Weapon : MonoBehaviour
 {
+    [SerializeField]
+    private Bullet bullet;
+
     public bool Ready => !OutOfAmmo && !Reloading;
     public bool OutOfAmmo => nextBullet >= magSize;
     public int BulletRemains => magSize - nextBullet;
 
-
-
+    public Vector3 targetVector;
     [SerializeField]
     private float attackRange;
     [SerializeField]
@@ -27,8 +29,6 @@ public class Weapon : MonoBehaviour
     private int overheat;
     [SerializeField]
     private int overheatMax;
-    [SerializeField]
-    private Bullet bullet;
     [SerializeField]
     private bool reloading = false;
     public bool Reloading
@@ -66,11 +66,9 @@ public class Weapon : MonoBehaviour
         nextBullet = 0;
         for (int i = 0; i < magSize; i++)
         {
-            //Bullet newBullet = Instantiate(bullet);
-            //newBullet.enabled = false;
-            //newBullet.GetComponent<Moveable>().StopOnArrival = false;
-            //newBullet.GetComponent<Moveable>().linearspeed = true;
-            //bullets.Add(newBullet);
+            Bullet newBullet = Instantiate(bullet, transform.position, Quaternion.identity, null);
+            newBullet.gameObject.SetActive(false);
+            bullets.Add(newBullet);
         }
     }
 
@@ -92,10 +90,10 @@ public class Weapon : MonoBehaviour
         {
             while (nextFire < Time.time)
             {
-                //bullets[nextBullet].transform.position = transform.position;
-                //bullets[nextBullet].enabled = true;
-                //bullets[nextBullet].GetComponent<Moveable>().MoveTo(transform.up);
-                //bullets[nextBullet].GetComponent<Moveable>().LookAt(transform.up);
+                bullets[nextBullet].transform.position = transform.position;
+                bullets[nextBullet].transform.up = targetVector;
+                Debug.Log($"bulet {bullets[nextBullet].name} enabled: {bullets[nextBullet].enabled} ");
+                bullets[nextBullet].gameObject.SetActive(true);
                 nextFire += FireRate;
                 nextBullet++;
             }
