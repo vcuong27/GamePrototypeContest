@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,11 @@ public class GameManager : MonoBehaviour
     public float SPAWN_COOLDOWN;
     public List<Enemy> enemyTemplates = new List<Enemy>();
     public Player playerTemplate;
+    [SerializeField]
+    private Image fadeInOut;
+    [SerializeField]
+    private Animator fadeAnim;
+
     public Text debug;
     public Text debug2;
 
@@ -54,6 +60,33 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (players[0].GetComponent<Destructible>().HP <= 0)
+        {
+            GameOver();
+        }
+    }
+
+    private IEnumerator Fade()
+    {
+        fadeAnim.SetBool("Fade", true);
+        yield return new WaitForSeconds(1.5f);
+    }
+
+    public void GameOver()
+    {
+        fadeInOut.gameObject.SetActive(true);
+        StartCoroutine(Fade());
+        SceneManager.LoadScene("Mainmenu");
+    }
+
+    private void RePlay()
+    {
+        SceneManager.LoadScene("MainScene");
+    }
+
+    private void Quit()
+    {
+        SceneManager.LoadScene("Mainmenu");
     }
 
     void SpawnEnemy(Enemy origin, Vector3 position)

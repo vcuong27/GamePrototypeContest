@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     private Destructible heath;
     private HeathBarUI BossHeathBar => boss ? GameManager.Instance.bossHeathBarUI : null;
     [SerializeField]
-    private Weapon weapon;
+    private List<Weapon> weapons;
 
     [SerializeField]
     private bool boss = false;
@@ -69,7 +69,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        weapon = GetComponentInChildren<Weapon>();
+        weapons.AddRange(GetComponentsInChildren<Weapon>());
         moveable = GetComponent<Moveable>();
         animator = GetComponent<Animator>();
         heath = GetComponent<Destructible>();
@@ -79,10 +79,18 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (BossHeathBar)
+
+        if (BossHeathBar && BossHeathBar.isActiveAndEnabled)
             BossHeathBar.percentage = heath.HP / heath.MaxHP;
-        if (weapon)
-            weapon.targetVector = TargetVector;
+
+        if (weapons.Count > 0)
+        {
+            int weaponsCount = weapons.Count;
+            foreach (Weapon weapon in weapons)
+            {
+                weapon.targetVector = TargetVector;
+            }
+        }
         if (moveable && Target != null && !Target.isActiveAndEnabled)
             moveable.target = null;
 
@@ -92,8 +100,9 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             moveable.Stop();
             state = EnemyState.Idle;
             animator.SetInteger("state", (int)state);
@@ -107,7 +116,7 @@ public class Enemy : MonoBehaviour
             Flee();
 
         }
-        else if (TargetDistance < attackRange && weapon != null && weapon.Ready)
+        else if (TargetDistance < attackRange && weapons.Count > 0)
         {
             if (lockAngle)
             {
@@ -122,22 +131,25 @@ public class Enemy : MonoBehaviour
         }
         else if (TargetDistance < DetectRange)
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             state = EnemyState.Engage;
             Engage();
         }
         else if (TargetDistance < OutOfContactRange && state == EnemyState.Engage)
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             state = EnemyState.Engage;
             Engage();
         }
         else
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             moveable.Stop();
             state = EnemyState.Idle;
         }
@@ -148,13 +160,17 @@ public class Enemy : MonoBehaviour
 
     private void Engage()
     {
+        if (BossHeathBar)
+            BossHeathBar.gameObject.SetActive(true);
         Vector2 engagePosition = TargetVector * (TargetDistance - attackRange + 0.5f) + Position;
         moveable.MoveTo(engagePosition);
     }
 
     private void Attack()
     {
-        weapon.Fire();
+        if (weapons.Count > 0)
+            foreach (Weapon weapon in weapons)
+                weapon.Fire();
     }
 
     private void Flee()
@@ -165,6 +181,8 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator OnDestruct(Destructible destructible)
     {
+        if (boss)
+            GameManager.Instance.GameOver();
         yield return new WaitForSeconds(1);
     }
 

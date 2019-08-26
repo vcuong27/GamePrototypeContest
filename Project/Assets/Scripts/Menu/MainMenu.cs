@@ -17,7 +17,7 @@ public class MainMenu : MonoBehaviour
     public void Play()
     {
         blackIMG.gameObject.SetActive(true);
-        Fading();
+        StartCoroutine(FadeIn());
         SceneManager.LoadScene("MainScene");
     }
 
@@ -32,9 +32,18 @@ public class MainMenu : MonoBehaviour
     }
 
 
-    IEnumerator Fading()
+    public IEnumerator FadeOut()
     {
-        anim.SetBool("Fade",true);
-        yield return new WaitUntil(() => blackIMG.color.a >= 0.9);
+        anim.SetBool("Fade", true);
+        yield return new WaitForSeconds(1.5f);
+        //yield return new WaitUntil(() => blackIMG.color.a <= 0.1);
+    }
+
+
+    public IEnumerator FadeIn()
+    {
+        anim.SetBool("Fad", false);
+        yield return new WaitForSeconds(1.5f);
+        //yield return new WaitUntil(() => blackIMG.color.a >= 0.9);
     }
 }
