@@ -1,75 +1,82 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     //instance
     public static GameManager Instance;
 
+    public Canvas UI;
+    public Canvas Background;
+    public MagazineUI magazineUI;
+    public HeathBarUI heathBarUI;
+    public List<Player> players;
+    public List<Enemy> enemies;
+
     /// <summary>
     /// public variable
     /// </summary>
-    public float m_ScreenWidth;
-    public float m_ScreenHeight;
-    public float M_SPAWN_COOLDOWN;
-    public List<BaseEnemy> m_ListEnermyTemplate = new List<BaseEnemy>();
+    public float ScreenWidth;
+    public float SreenHeight;
+    public float SPAWN_COOLDOWN;
+    public List<Enemy> enemyTemplates = new List<Enemy>();
+    public Player playerTemplate;
+    public Text debug;
 
-
-    public List<BaseEnemy> GetListEnermy()
-    {
-        return m_ListEnermy;
-    }
 
     /// <summary>
     /// private variable
     /// </summary>
-    private List<BaseEnemy> m_ListEnermy = new List<BaseEnemy>();
-    private float m_DelaySpawn;
+    private float spawnPoint;
 
 
     private void Start()
     {
+        debug.text = (1 / Time.deltaTime).ToString();
+        //Time.timeScale = 0.25f;
         Debug.Log("GameManager start");
         Instance = this;
         Screen.orientation = ScreenOrientation.Portrait;
-        m_ScreenWidth = 20;
-        m_ScreenHeight = 10;
-        m_ListEnermy.AddRange(m_ListEnermyTemplate);
+        ScreenWidth = 20;
+        SreenHeight = 10;
+
+
+
+        float dt = Time.deltaTime;
+        players.Add(Instantiate(playerTemplate, new Vector3(0, -5, 0), Quaternion.identity));
+        SpawnEnemy(enemyTemplates[1], Vector3.left);
+        SpawnEnemy(enemyTemplates[0], Vector3.right + Vector3.up);
     }
 
     private void Update()
     {
-        float dt = Time.deltaTime;
-
-
-        // Spawn Enermy
-        if (m_DelaySpawn <=  0)
-        {
-            m_DelaySpawn = M_SPAWN_COOLDOWN;
-            //BaseEnemy enermy = SpawnEnermy();
-            //enermy.transform.position = GetSpawnLocation();
-        }
-        else
-        {
-            m_DelaySpawn -= dt;
-        }
     }
 
-
-    private BaseEnemy SpawnEnermy()
+    void SpawnEnemy(Enemy origin, Vector3 position)
     {
-        BaseEnemy enermy = ObjectsPool<BaseEnemy>.GetInstance(m_ListEnermyTemplate[0].gameObject);
-        m_ListEnermy.Add(enermy);
-        return enermy;
+        Enemy enemy = Instantiate(origin, position, Quaternion.identity);
+        enemies.Add(enemy);
+
     }
 
-    private Vector3 GetSpawnLocation()
+
+    public Enemy GetClosestEnemy(Vector3 pos)
     {
-        Vector3 vec = new Vector3(1.0f,1.0f,1.0f);
-        // TODO: need to have random or special location to spawn enermy
-
-        return vec;
+        Enemy target = null;
+        float magnitude = float.PositiveInfinity;
+        foreach (Enemy e in enemies)
+        {
+            if (e.isActiveAndEnabled && magnitude > (e.transform.position - pos).magnitude)
+            {
+                magnitude = (e.transform.position - pos).magnitude;
+                target = e;
+            }
+        }
+        return target;
+        //BaseEnemy enermy = ObjectsPool<BaseEnemy>.GetInstance(m_ListEnermyTemplate[0].gameObject);
+        //m_ListEnermy.Add(enermy);
+        //return enermy;
     }
-
 }
