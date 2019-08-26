@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
         feet = GetComponentsInChildren<Animator>()[2];
         heath = GetComponent<Destructible>();
 
-        if (heath) heath.OnDestruct += Ondestruct;
+        if (heath) heath.OnDestruct += OnDestruct;
     }
 
     // Update is called once per frame
@@ -194,7 +194,7 @@ public class Player : MonoBehaviour
         weapon.StopFire();
         state = PlayerState.Die;
     }
-    private IEnumerator Ondestruct(Destructible destructible)
+    private IEnumerator OnDestruct(Destructible destructible)
     {
         InputManager.Default.OnKeyHold -= OnKeyHeld;
         InputManager.Default.OnMouseHold -= OnMouseHeld;

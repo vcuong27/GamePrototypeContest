@@ -73,6 +73,7 @@ public class Enemy : MonoBehaviour
         moveable = GetComponent<Moveable>();
         animator = GetComponent<Animator>();
         heath = GetComponent<Destructible>();
+        if (heath) heath.OnDestruct += OnDestruct;
     }
 
     // Update is called once per frame
@@ -160,6 +161,11 @@ public class Enemy : MonoBehaviour
     {
         Vector2 fleePosition = TargetVector * (TargetDistance - attackRange) + Position;
         moveable.MoveTo(fleePosition);
+    }
+
+    private IEnumerator OnDestruct(Destructible destructible)
+    {
+        yield return new WaitForSeconds(1);
     }
 
 }

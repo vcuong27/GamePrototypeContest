@@ -74,7 +74,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.15
+  m_Radius: 0.25
 --- !u!212 &7364427822603566822
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 0
-  maxHP: 5
+  maxHP: 7
   dot: 0
   dotInterval: 0
   nextDOTtick: 0
