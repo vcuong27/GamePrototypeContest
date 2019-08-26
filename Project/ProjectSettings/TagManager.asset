@@ -41,6 +41,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: bg
+    uniqueID: 2117698675
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
@@ -52,4 +55,7 @@ TagManager:
     locked: 0
   - name: enemytall
     uniqueID: 1431854365
+    locked: 0
+  - name: UI
+    uniqueID: 338332485
     locked: 0

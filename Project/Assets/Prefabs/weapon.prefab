@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5415787937965324622}
   m_Layer: 8
   m_Name: weapon
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 222545396475409373, guid: 8cc0fbf49360faa44a78c5d238994eb3, type: 3}
-  magUI: {fileID: 0}
   targetVector: {x: 0, y: 0, z: 0}
   attackRange: 3
   rateOfFire: 600

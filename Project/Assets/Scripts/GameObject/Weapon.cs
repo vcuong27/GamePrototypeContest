@@ -66,12 +66,13 @@ public class Weapon : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         nextBullet = 0;
-        for (int i = 0; i < magSize; i++)
-        {
-            Bullet newBullet = Instantiate(bullet, transform.position, Quaternion.identity, null);
-            newBullet.gameObject.SetActive(false);
-            bullets.Add(newBullet);
-        }
+        if (bullet)
+            for (int i = 0; i < magSize; i++)
+            {
+                Bullet newBullet = Instantiate(bullet, transform.position, Quaternion.identity, null);
+                newBullet.gameObject.SetActive(false);
+                bullets.Add(newBullet);
+            }
     }
 
     // Update is called once per frame
@@ -91,12 +92,13 @@ public class Weapon : MonoBehaviour
         }
         else if (firing)
         {
-            while (nextFire < Time.time)
+            if (nextFire < Time.time)
             {
                 Debug.Log($"{nextBullet}");
                 bullets[nextBullet].transform.position = transform.position;
                 bullets[nextBullet].transform.up = targetVector;
                 //Debug.Log($"bulet {bullets[nextBullet].name} enabled: {bullets[nextBullet].enabled} ");
+                bullets[nextBullet].gameObject.SetActive(false);
                 bullets[nextBullet].gameObject.SetActive(true);
                 nextFire += FireRate;
                 nextBullet++;

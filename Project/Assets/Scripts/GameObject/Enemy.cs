@@ -16,10 +16,16 @@ public class Enemy : MonoBehaviour
     public Player Target => GameManager.Instance.players[0];
     private Moveable moveable;
     private Destructible heath;
+    private HeathBarUI BossHeathBar => boss ? GameManager.Instance.bossHeathBarUI : null;
     [SerializeField]
     private Weapon weapon;
 
-
+    [SerializeField]
+    private bool boss = false;
+    [SerializeField]
+    private bool lockAngle = false;
+    [SerializeField]
+    private bool IsLockAngle = false;
     [SerializeField]
     private float attackRadius;
     [SerializeField]
@@ -72,6 +78,8 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (BossHeathBar)
+            BossHeathBar.percentage = heath.HP / heath.MaxHP;
         if (weapon)
             weapon.targetVector = TargetVector;
         if (moveable && Target != null && !Target.isActiveAndEnabled)
@@ -90,17 +98,20 @@ public class Enemy : MonoBehaviour
             animator.SetInteger("state", (int)state);
             return;
         }
+        if (moveable && IsLockAngle) moveable.target = null;
 
         if (TargetDistance < fleeRange)
         {
             state = EnemyState.Flee;
-            if (weapon)
-                weapon.StopFire();
             Flee();
 
         }
-        else if (TargetDistance < attackRange && weapon.Ready)
+        else if (TargetDistance < attackRange && weapon != null && weapon.Ready)
         {
+            if (lockAngle)
+            {
+                IsLockAngle = true;
+            }
             state = EnemyState.Attack;
             Attack();
         }

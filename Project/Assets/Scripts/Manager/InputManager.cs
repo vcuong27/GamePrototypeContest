@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour
     public delegate void KeyHandler(KeyCode k, float dt);
     public delegate void MouseHandler(int button, Vector3 position, float dt);
     public delegate void DpadHandler(Vector2 axis, float dt);
-    public delegate void TouchInputHandler(Touch touch, float dt);
+    public delegate void TouchInputHandler(Vector2 pos, float dt);
 
     private HashSet<KeyCode> holding = new HashSet<KeyCode>();
     private HashSet<int> mouseHolding = new HashSet<int>();
@@ -24,17 +24,17 @@ public class InputManager : MonoBehaviour
     public MouseHandler OnMouseHold;
     public DpadHandler OnDpadHold;
     public TouchInputHandler OnTouch;
-
+    [SerializeField]
     private ControllerType type = ControllerType.None;
 
     public Dpad dpad;
 
     // TODO: GameSetting Implement later
     public bool dpadEnabled = false;
-    public bool touchInputEnabled = false;
+    public bool touchInputEnabled = true;
 
     // Debug
-    public Text debug;
+    public Text debug => GameManager.Instance.debug2;
     private InputManager()
     {
 
@@ -76,11 +76,19 @@ public class InputManager : MonoBehaviour
         {
             KeyboardHandle(dt);
         }
-        else if (type == ControllerType.Touch)
+
+        if (type == ControllerType.Touch)
         {
-            if (dpad != null)
+            if (dpad != null && dpadEnabled)
             {
                 DpadHandle(dt);
+            }
+            if (touchInputEnabled)
+            {
+                if (Input.touchCount > 0)
+                {
+                    TouchHandle(dt);
+                }
             }
         }
 
@@ -94,6 +102,7 @@ public class InputManager : MonoBehaviour
         {
             debugText += "mouse" + k.ToString();
         }
+        //debugText += "touch" + Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position).ToString();
         debug.text = debugText;
     }
 
@@ -146,9 +155,7 @@ public class InputManager : MonoBehaviour
 
     void TouchHandle(float dt)
     {
-        foreach (Touch touch in Input.touches)
-        {
-            OnTouch?.Invoke(touch, dt);
-        }
+        if (Input.touchCount > 0)
+            OnTouch?.Invoke(Input.GetTouch(0).position, dt);
     }
 }

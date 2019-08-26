@@ -7,8 +7,8 @@ public class HeathBarUI : MonoBehaviour
 {
     [SerializeField]
     private RawImage heathBar;
-    public static string COLOR_BAR_FULL_HEATH = "#36992DFF";
-    public static string COLOR_BAR_LOW_HEATH = "#9B2D2DFF";
+    public Color FullHeathColor;//"#36992DFF";
+    public Color LowHeathColor; // "#9B2D2DFF";
     private float HEATH_BAR_CHANGE_DURATION = 0.7f;
     [SerializeField]
     private float lowthreshold = 0.5f;
@@ -41,7 +41,7 @@ public class HeathBarUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Color color = COLOR_BAR_FULL_HEATH.GetColor();
+        heathBar.color = FullHeathColor;
 
         heathBar.transform.localScale = Vector3.one;
     }
@@ -52,11 +52,11 @@ public class HeathBarUI : MonoBehaviour
         float dt = Time.deltaTime;
         if (percentage <= lowthreshold)
         {
-            heathBar.color = COLOR_BAR_LOW_HEATH.GetColor();
+            heathBar.color = LowHeathColor;
         }
         else
         {
-            heathBar.color = COLOR_BAR_FULL_HEATH.GetColor();
+            heathBar.color = FullHeathColor;
         }
 
         if (currentPercentage != percentage)

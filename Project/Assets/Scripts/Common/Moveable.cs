@@ -83,7 +83,7 @@ public class Moveable : MonoBehaviour
 
     // Touch/AI
     [SerializeField]
-    private bool autopilot = true;
+    public bool autopilot = true;//TODO: private
     [SerializeField]
     public bool linearspeed = false;
 
