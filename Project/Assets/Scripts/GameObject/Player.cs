@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour
         Move,
         Die = -1
     }
+
+    public Text debug => GameManager.Instance.debug;
 
     public Enemy Target => GameManager.Instance.GetClosestEnemy(transform.position);
     private Moveable moveable;
@@ -69,12 +72,13 @@ public class Player : MonoBehaviour
         feet = GetComponentsInChildren<Animator>()[2];
         heath = GetComponent<Destructible>();
 
-        if (heath) heath.OnDestruct += Ondestruct;
+        if (heath) heath.OnDestruct += OnDestruct;
     }
 
     // Update is called once per frame
     void Update()
     {
+        debug.text = $"{moveable.autopilot}";
         weapon.targetVector = TargetVector;
         heathBarUI.percentage = heath.HP / heath.MaxHP;
         if (heath.HP <= 0) return;
@@ -167,9 +171,9 @@ public class Player : MonoBehaviour
     {
         moveable.input = input;
     }
-    public void OnTouch(Touch touch, float dt)
+    public void OnTouch(Vector2 touchPos, float dt)
     {
-        moveable.MoveTo(Camera.main.ScreenToWorldPoint(touch.position));
+        moveable.MoveTo(Camera.main.ScreenToWorldPoint(touchPos));
     }
 
     void OnMouseHeld(int button, Vector3 position, float dt)
@@ -190,7 +194,7 @@ public class Player : MonoBehaviour
         weapon.StopFire();
         state = PlayerState.Die;
     }
-    private IEnumerator Ondestruct(Destructible destructible)
+    private IEnumerator OnDestruct(Destructible destructible)
     {
         InputManager.Default.OnKeyHold -= OnKeyHeld;
         InputManager.Default.OnMouseHold -= OnMouseHeld;

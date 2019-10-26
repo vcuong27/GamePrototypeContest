@@ -16,10 +16,16 @@ public class Enemy : MonoBehaviour
     public Player Target => GameManager.Instance.players[0];
     private Moveable moveable;
     private Destructible heath;
+    private HeathBarUI BossHeathBar => boss ? GameManager.Instance.bossHeathBarUI : null;
     [SerializeField]
-    private Weapon weapon;
+    private List<Weapon> weapons;
 
-
+    [SerializeField]
+    private bool boss = false;
+    [SerializeField]
+    private bool lockAngle = false;
+    [SerializeField]
+    private bool IsLockAngle = false;
     [SerializeField]
     private float attackRadius;
     [SerializeField]
@@ -63,17 +69,28 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        weapon = GetComponentInChildren<Weapon>();
+        weapons.AddRange(GetComponentsInChildren<Weapon>());
         moveable = GetComponent<Moveable>();
         animator = GetComponent<Animator>();
         heath = GetComponent<Destructible>();
+        if (heath) heath.OnDestruct += OnDestruct;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (weapon)
-            weapon.targetVector = TargetVector;
+
+        if (BossHeathBar && BossHeathBar.isActiveAndEnabled)
+            BossHeathBar.percentage = heath.HP / heath.MaxHP;
+
+        if (weapons.Count > 0)
+        {
+            int weaponsCount = weapons.Count;
+            foreach (Weapon weapon in weapons)
+            {
+                weapon.targetVector = TargetVector;
+            }
+        }
         if (moveable && Target != null && !Target.isActiveAndEnabled)
             moveable.target = null;
 
@@ -83,24 +100,28 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             moveable.Stop();
             state = EnemyState.Idle;
             animator.SetInteger("state", (int)state);
             return;
         }
+        if (moveable && IsLockAngle) moveable.target = null;
 
         if (TargetDistance < fleeRange)
         {
             state = EnemyState.Flee;
-            if (weapon)
-                weapon.StopFire();
             Flee();
 
         }
-        else if (TargetDistance < attackRange && weapon.Ready)
+        else if (TargetDistance < attackRange && weapons.Count > 0)
         {
+            if (lockAngle)
+            {
+                IsLockAngle = true;
+            }
             state = EnemyState.Attack;
             Attack();
         }
@@ -110,22 +131,25 @@ public class Enemy : MonoBehaviour
         }
         else if (TargetDistance < DetectRange)
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             state = EnemyState.Engage;
             Engage();
         }
         else if (TargetDistance < OutOfContactRange && state == EnemyState.Engage)
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             state = EnemyState.Engage;
             Engage();
         }
         else
         {
-            if (weapon)
-                weapon.StopFire();
+            if (weapons.Count > 0)
+                foreach (Weapon weapon in weapons)
+                    weapon.StopFire();
             moveable.Stop();
             state = EnemyState.Idle;
         }
@@ -136,19 +160,30 @@ public class Enemy : MonoBehaviour
 
     private void Engage()
     {
+        if (BossHeathBar)
+            BossHeathBar.gameObject.SetActive(true);
         Vector2 engagePosition = TargetVector * (TargetDistance - attackRange + 0.5f) + Position;
         moveable.MoveTo(engagePosition);
     }
 
     private void Attack()
     {
-        weapon.Fire();
+        if (weapons.Count > 0)
+            foreach (Weapon weapon in weapons)
+                weapon.Fire();
     }
 
     private void Flee()
     {
         Vector2 fleePosition = TargetVector * (TargetDistance - attackRange) + Position;
         moveable.MoveTo(fleePosition);
+    }
+
+    private IEnumerator OnDestruct(Destructible destructible)
+    {
+        if (boss)
+            GameManager.Instance.GameOver();
+        yield return new WaitForSeconds(1);
     }
 
 }
